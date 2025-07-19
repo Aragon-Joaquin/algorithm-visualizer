@@ -1,21 +1,7 @@
+import type { Maze, Square } from "./types/types"
+
 export default function App() {
 	return <></>
-}
-
-interface Maze {
-	XSquares: number
-	YSquares: number
-}
-
-interface Square {
-	width: number
-	height: number
-	edge?: {
-		top: boolean
-		right: boolean
-		bottom: boolean
-		left: boolean
-	}
 }
 
 function getCanvas() {
@@ -56,10 +42,3 @@ function createMaze(ctx: CanvasRenderingContext2D, Maze: Maze, canvas: { height:
 }
 
 getCanvas()
-
-//! Kruskal's Algorithm (for now)
-function algorithmMaze(xAxis: number, yAxis: number): Square[] {
-	let maze: Square[] = []
-
-	return maze
-}
