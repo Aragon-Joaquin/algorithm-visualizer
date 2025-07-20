@@ -4,6 +4,11 @@ export default function App() {
 	return <></>
 }
 
+const maze: Maze = {
+	XSquares: 25,
+	YSquares: 20,
+}
+
 function getCanvas() {
 	const canvas = document?.getElementById('main-canvas') as HTMLCanvasElement | null
 	const ctx = canvas?.getContext('2d')
@@ -11,14 +16,14 @@ function getCanvas() {
 	if (!ctx || !canvas) return
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height)
-	createMaze(ctx, { XSquares: 25, YSquares: 20 }, { height: canvas.height, width: canvas.width })
+	createMaze(ctx, maze, { height: canvas.height, width: canvas.width })
 }
 
 function createMaze(ctx: CanvasRenderingContext2D, Maze: Maze, canvas: { height: number; width: number }) {
 	const { XSquares, YSquares } = Maze
 	const { height, width } = canvas
 
-	const SquareProps: Square = {
+	const SquareProps = {
 		width: width / XSquares,
 		height: height / YSquares
 	}
