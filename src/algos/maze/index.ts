@@ -1,1 +1,1 @@
-export * from './krusl'
+export * from './kruskal'

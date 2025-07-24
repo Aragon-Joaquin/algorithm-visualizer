@@ -1,49 +1,20 @@
-import type { Maze, Square } from "./types/types"
+import { useEffect } from "react"
+import { useMazeContext } from "./context"
+import { createMaze } from "./utils"
 
 export default function App() {
+	const { setCtx, mazeProps } = useMazeContext()
+
+	useEffect(() => {
+		const canvas = document?.getElementById("main-canvas") as HTMLCanvasElement | null
+		const ctx = canvas?.getContext("2d")
+
+		if (!ctx || !canvas) return
+		const { width, height } = canvas
+
+		createMaze(ctx, { width, height }, mazeProps)
+		setCtx(ctx)
+	}, [])
+
 	return <></>
 }
-
-const maze: Maze = {
-	XSquares: 25,
-	YSquares: 20,
-}
-
-function getCanvas() {
-	const canvas = document?.getElementById('main-canvas') as HTMLCanvasElement | null
-	const ctx = canvas?.getContext('2d')
-
-	if (!ctx || !canvas) return
-
-	ctx.clearRect(0, 0, canvas.width, canvas.height)
-	createMaze(ctx, maze, { height: canvas.height, width: canvas.width })
-}
-
-function createMaze(ctx: CanvasRenderingContext2D, Maze: Maze, canvas: { height: number; width: number }) {
-	const { XSquares, YSquares } = Maze
-	const { height, width } = canvas
-
-	const SquareProps = {
-		width: width / XSquares,
-		height: height / YSquares
-	}
-
-	// borders
-	ctx.strokeStyle = 'white'
-	for (let i = 0; i < XSquares; i++) {
-		for (let j = 0; j < YSquares; j++) {
-			ctx.strokeRect(i * SquareProps.width, j * SquareProps.height, SquareProps.width, SquareProps.height)
-		}
-	}
-
-	// squares
-	ctx.strokeStyle = 'black'
-	ctx.fillStyle = 'white'
-	for (let i = 0; i < XSquares; i++) {
-		for (let j = 0; j < YSquares; j++) {
-			ctx.fillRect(i * SquareProps.width + 1, j * SquareProps.height + 1, SquareProps.width - 2, SquareProps.height - 2)
-		}
-	}
-}
-
-getCanvas()
