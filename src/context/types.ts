@@ -1,5 +1,5 @@
 import { createContext, type Dispatch, type SetStateAction } from "react"
-import type { MazeProps } from "../types"
+import type { MazeInfo, MazeProps } from "../types"
 
 export const MazeContext = createContext({} as MazeContextType)
 
@@ -9,6 +9,6 @@ interface MazeContextType {
 	mazeProps: MazeProps
 	setMazeProps: StateDispatcher<MazeProps>
 
-	ctx: CanvasRenderingContext2D | undefined
-	setCtx: StateDispatcher<CanvasRenderingContext2D | undefined>
+	mazeInfo: MazeInfo | undefined
+	setMazeInfo: StateDispatcher<MazeInfo | undefined>
 }
