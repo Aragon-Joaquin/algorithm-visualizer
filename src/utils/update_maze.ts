@@ -11,7 +11,10 @@ export function UpdateMaze(cMaze: MazeNodes, nMaze: MazeNodes, ctx: CanvasRender
 	ctx.strokeStyle = 'black'
 	ctx.fillStyle = 'white'
 
-	const { SHeigth, SWidth, SThick } = getSquareSizes({ width: canvasWidth, height: canvasHeight }, { x: XSquares, y: YSquares })
+	const { SHeigth, SWidth, SThick } = getSquareSizes(
+		{ width: canvasWidth, height: canvasHeight },
+		{ x: XSquares, y: YSquares }
+	)
 
 	// squares generation
 	ctx.strokeStyle = 'black'

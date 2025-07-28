@@ -1,4 +1,4 @@
-import type { MazeNodes, Square } from "../../types"
+import type { MazeNodes, Square } from '../../types'
 
 //! Kruskal's Algorithm
 export function mazeKruskal(xAxis: number, yAxis: number, m: MazeNodes): MazeNodes {
@@ -33,9 +33,9 @@ export function mazeKruskal(xAxis: number, yAxis: number, m: MazeNodes): MazeNod
 
 		//NOTE: delete borders between squares (check if they're references or copies of the element)
 		const currentSquare = maze[yLevel][xAxis]
-		const [cord, square] = squareSelected as [keyof Square["edge"], Square]
+		const [cord, square] = squareSelected as [keyof Square['edge'], Square]
 
-		currentSquare.edge[cord as keyof Square["edge"]] = false
+		currentSquare.edge[cord as keyof Square['edge']] = false
 		square.visited = true
 		square.edge[opposite_edges[cord]] = false
 	})
@@ -49,14 +49,14 @@ function calculateMatrixPositions(matrix: MazeNodes) {
 			top: matrix[y - 1][pos],
 			right: matrix[y][pos + 1],
 			bottom: matrix[y + 1][pos],
-			left: matrix[y][pos - 1],
+			left: matrix[y][pos - 1]
 		})
 }
 
 // TODO: try a better way
 const opposite_edges = {
-	top: "bottom",
-	right: "left",
-	bottom: "top",
-	left: "right",
+	top: 'bottom',
+	right: 'left',
+	bottom: 'top',
+	left: 'right'
 } as const

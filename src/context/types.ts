@@ -1,9 +1,9 @@
-import { createContext, type Dispatch, type SetStateAction } from "react"
-import type { MazeInfo, MazeProps } from "../types"
+import { createContext, type Dispatch, type SetStateAction } from 'react'
+import type { MazeInfo, MazeProps } from '../types'
 
 export const MazeContext = createContext({} as MazeContextType)
 
-type StateDispatcher<T extends unknown> = Dispatch<SetStateAction<T>>
+type StateDispatcher<T> = Dispatch<SetStateAction<T>>
 
 interface MazeContextType {
 	mazeProps: MazeProps

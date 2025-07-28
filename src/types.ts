@@ -1,6 +1,6 @@
 //NOTE: the difference between mazeProps & mazeInfo is explained in mazeContext.tsx
 
-import type { MAZE_ALGORITHMS } from "./algos/types"
+import type { MAZE_ALGORITHMS } from './algos/types'
 
 export interface MazeProps {
 	XSquares: number

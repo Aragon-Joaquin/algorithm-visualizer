@@ -1,2 +1,2 @@
-export * from "./mazeContext"
-export * from "./types"
+export * from './mazeContext'
+export * from './types'
