@@ -1,29 +1,34 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useLayoutEffect, useState, type ReactNode } from 'react'
+import { getSquareSizes } from '../maze_helpers/nodeUtils'
 import type { MazeInfo, MazeProps } from '../types'
-import { MazeContext } from './types'
+import { useTriggerMazeUpdate } from './hooks'
+import { defaultMazeProps, MazeContext } from './types'
+import { getCtx } from './utils'
 
 //TODO: make reducer?
 export function MazeProvider({ children }: { children: ReactNode }) {
 	//NOTE: mazeProps only will cause a re-creation of the maze.
-	const [mazeProps, setMazeProps] = useState<MazeProps>({
-		XSquares: 25,
-		YSquares: 20,
-		canvasHeight: 0,
-		canvasWidth: 0
-	} as MazeProps)
+	const [mazeProps, setMazeProps] = useState<MazeProps>(defaultMazeProps)
 
 	//NOTE: meanwhile mazeInfo causes an update.
 	const [mazeInfo, setMazeInfo] = useState<MazeInfo>()
 
+	useTriggerMazeUpdate(mazeInfo, mazeProps)
+
 	//exec only once
-	useEffect(() => {
-		const canvas = document?.getElementById('main-canvas') as HTMLCanvasElement | null
-		const ctx = canvas?.getContext('2d')
+	useLayoutEffect(() => {
+		const canvas = getCtx()
+		if (!canvas) return
 
-		if (!ctx || !canvas) return console.error('use a proper browser to view this page')
-		const canvasSizes = { canvasHeight: canvas.height, canvasWidth: canvas.width }
-
-		setMazeProps((prev) => ({ ...prev, ...canvasSizes, ctx }))
+		const { canvasHeight, canvasWidth } = canvas
+		setMazeProps((prev) => ({
+			...prev,
+			...canvas,
+			SquareSizes: getSquareSizes(
+				{ width: canvasWidth, height: canvasHeight },
+				{ x: mazeProps.XSquares, y: mazeProps.YSquares }
+			)
+		}))
 	}, [])
 
 	return (

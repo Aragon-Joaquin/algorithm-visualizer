@@ -1,3 +1,4 @@
 export * from './borderBuilder'
 export * from './compareNodes'
+export * from './createMazeSize'
 export * from './getSquareSizes'

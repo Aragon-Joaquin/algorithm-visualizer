@@ -16,6 +16,6 @@ export const getSquareSizes = (
 ) =>
 	({
 		SWidth: canvas.width / squares.x,
-		SHeigth: canvas.height / squares.y,
+		SHeight: canvas.height / squares.y,
 		SThick: thickness
 	} as const)
