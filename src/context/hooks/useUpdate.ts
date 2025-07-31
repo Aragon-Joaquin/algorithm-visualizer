@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { MAZE_ALGORITHMS } from '../../algos/types'
+import { InitializeMazeAlgorithm } from '../../algos/types'
 import { UpdateMaze } from '../../maze_helpers'
 import { createMazeSize } from '../../maze_helpers/nodeUtils'
 import type { MazeInfo, MazeNodes, MazeProps } from '../../types'
@@ -14,9 +14,12 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo | undefined, mazeProps: 
 	useEffect(() => {
 		if (!mazeInfo) return
 
-		const nMaze = !mazeInfo.Algorithm
-			? MAZE_ALGORITHMS.Kruskal(mazeProps.XSquares, mazeProps.YSquares, mazeInfo.Nodes)
-			: mazeInfo.Algorithm(mazeProps.XSquares, mazeProps.YSquares, mazeInfo.Nodes)
+		const nMaze = InitializeMazeAlgorithm(mazeInfo.Algorithm, {
+			xAxis: mazeProps.XSquares,
+			yAxis: mazeProps.YSquares,
+			mNodes: prevMaze.current
+		})
+
 		UpdateMaze(mazeInfo['Nodes'], nMaze, mazeProps)
 		prevMaze.current = mazeInfo['Nodes']
 	}, [mazeInfo, mazeProps])

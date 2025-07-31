@@ -20,14 +20,17 @@ export function borderBuilder(
 	thick: number = 2
 ) {
 	//TODO: check if condition can be null
+	//TODO: maybe delete the entire square and paint it over?
 	return ({ pos, remove = false }: { pos: Positions; remove: boolean }) => {
-		ctx.fillStyle = !remove ? 'black' : 'white'
+		//ctx.fillStyle = !remove ? 'black' : 'white'
+		ctx.fillStyle = !remove ? 'red' : 'green'
 
+		// the borders needs to overlap with the adjacent square
 		const positionsToPaint = {
-			top: () => ctx.fillRect(xPos, yPos, width, thick),
-			right: () => ctx.fillRect(xPos + width, yPos, thick, height),
-			bottom: () => ctx.fillRect(xPos, yPos + height, width, thick),
-			left: () => ctx.fillRect(xPos, yPos, thick, height)
+			top: () => ctx.fillRect(xPos, yPos - thick, width, thick),
+			right: () => ctx.fillRect(xPos + width - thick, yPos, thick, height),
+			bottom: () => ctx.fillRect(xPos, yPos + height - thick, width, thick),
+			left: () => ctx.fillRect(xPos - thick, yPos, thick, height)
 		} as const
 
 		positionsToPaint[pos]()

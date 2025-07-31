@@ -24,6 +24,13 @@
 body {
 	display: flex;
 	justify-content: center;
+	& > #root {
+		height: 100dvh;
+		width: 100vw;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 }
 
 #main-canvas {
@@ -34,5 +41,5 @@ body {
 	max-width: 1280px;
 	max-height: 720px;
 
-	border: 2px solid red;
+	border: 5px solid rgb(0, 0, 0);
 }
