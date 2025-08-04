@@ -1,4 +1,6 @@
-import type { MazeNodes } from '../../types'
+import { DisjointSet } from '../../DStructures/DisjointSet'
+import type { MazeNodes, Square } from '../../types'
+import { OPPOSING_EDGES } from '../../utils'
 import type { MazeAlgoProps } from '../types'
 
 type randomPos = { pos: number; random: number }
@@ -11,7 +13,7 @@ export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes 
 	const maze = mNodes.slice()
 
 	//disjoint checking, group A | group B
-	// const disjointDS = [new Set<number>(), new Set<number>()]
+	const disjointDS = new DisjointSet(xAxis * yAxis)
 
 	//NOTE: generate random array of non repeating numbers.
 	let randomPositions: (randomPos | number)[] = []
@@ -23,21 +25,35 @@ export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes 
 		const xLevel = Math.floor(val % xAxis)
 
 		const neighbour = getAdjacentNode(maze)
-		const discartingAxis = neighbour(yLevel, xLevel)
+		let discartingAxis = neighbour(yLevel, xLevel)
 
 		for (let i = 0; i < 4; i++) {
-			const pos = getRandomPos(discartingAxis.length)
-			const [cord, square] = discartingAxis[pos]
+			const random = getRandomPos(discartingAxis.length)
+			const [coord, square] = discartingAxis[random]
 
-			const resSquare = square()
+			console.log(discartingAxis)
+
+			const [pos, resSquare] = square()
 
 			if (resSquare != undefined && !resSquare.visited) {
 				//check if they belong to the same group.
+
 				//if they do, skip
+				if (disjointDS.find(val) === disjointDS.find(pos)) continue
+
 				//if isn't, remove the wall and merge them
+				disjointDS.union(pos, val)
+
+				const assertedEdge = coord as keyof Square['edge']
+
+				maze[yLevel][xLevel].edge[assertedEdge] = false
+				resSquare.edge[OPPOSING_EDGES[assertedEdge]] = false
+				resSquare.visited = true
+
 				break
 			}
-			discartingAxis.splice(pos, 1)
+
+			discartingAxis = discartingAxis.filter((_, j) => j != random)
 		}
 	})
 
@@ -50,9 +66,9 @@ function getAdjacentNode(matrix: MazeNodes) {
 	*/
 	return (y: number, pos: number) =>
 		Object.entries({
-			top: () => matrix[y - 1]?.[pos],
-			right: () => matrix[y]?.[pos + 1],
-			bottom: () => matrix[y + 1]?.[pos],
-			left: () => matrix[y]?.[pos - 1]
+			top: () => [(y - 1) * matrix[0].length + pos, matrix[y - 1]?.[pos]] as [number, Square],
+			right: () => [y * matrix[0].length + (pos + 1), matrix[y]?.[pos + 1]] as [number, Square],
+			bottom: () => [(y + 1) * matrix[0].length + pos, matrix[y + 1]?.[pos]] as [number, Square],
+			left: () => [y * matrix[0].length + (pos - 1), matrix[y]?.[pos - 1]] as [number, Square]
 		})
 }

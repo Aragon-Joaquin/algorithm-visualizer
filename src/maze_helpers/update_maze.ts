@@ -20,7 +20,7 @@ export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
 
 	const mazeSize = new createMazeSize(XSquares, YSquares)
 
-	// testing
+	// clear the entire canvas to repaint everything again (fix this later)
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
 	mazeSize.loopMaze((i, j) => {
@@ -30,13 +30,5 @@ export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
 		const nSquare = newMaze[j][i]
 		const BBuilder = borderBuilder(ctx, xPos, yPos, SWidth, SHeight, SThick)
 		BBuilder({ edges: nSquare['edge'] })
-
-		// if (checkIfNodesEquals(pSquare, nSquare)) return
-
-		// for (const key in nSquare['edge']) {
-		// const assertedKey = key as keyof Square['edge']
-		// if (pSquare['edge'][assertedKey] === nSquare['edge'][assertedKey]) continue
-		// 	return
-		// }
 	})
 }
