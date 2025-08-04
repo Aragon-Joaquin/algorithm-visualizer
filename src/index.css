@@ -41,5 +41,6 @@ body {
 	max-width: 1280px;
 	max-height: 720px;
 
-	border: 5px solid rgb(0, 0, 0);
+	background-color: rgb(164, 145, 145);
+	border: 2px solid rgb(0, 0, 0);
 }

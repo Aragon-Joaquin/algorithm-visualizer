@@ -1,6 +1,6 @@
 //make it class if its complexity increases
 
-type Positions = 'top' | 'right' | 'bottom' | 'left'
+import type { Square } from '../../types'
 
 /**
  * @class
@@ -19,21 +19,40 @@ export function borderBuilder(
 	height: number,
 	thick: number = 2
 ) {
-	//TODO: check if condition can be null
-	//TODO: maybe delete the entire square and paint it over?
-	return ({ pos, remove = false }: { pos: Positions; remove: boolean }) => {
-		//ctx.fillStyle = !remove ? 'black' : 'white'
-		ctx.fillStyle = !remove ? 'red' : 'green'
+	ctx.fillStyle = 'white'
+	ctx.strokeStyle = 'white'
+	ctx.lineWidth = thick
 
-		// the borders needs to overlap with the adjacent square
-		const positionsToPaint = {
-			top: () => ctx.fillRect(xPos, yPos - thick, width, thick),
-			right: () => ctx.fillRect(xPos + width - thick, yPos, thick, height),
-			bottom: () => ctx.fillRect(xPos, yPos + height - thick, width, thick),
-			left: () => ctx.fillRect(xPos - thick, yPos, thick, height)
+	return ({ edges }: { edges: Square['edge'] }) => {
+		// recreate empty square with no borders
+
+		const edgeDrawers = {
+			top: () => {
+				ctx.moveTo(xPos, yPos)
+				ctx.lineTo(xPos + width, yPos)
+			},
+			right: () => {
+				ctx.moveTo(xPos + width, yPos)
+				ctx.lineTo(xPos + width, yPos + height)
+			},
+			bottom: () => {
+				ctx.moveTo(xPos + width, yPos + height)
+				ctx.lineTo(xPos, yPos + height)
+			},
+			left: () => {
+				ctx.moveTo(xPos, yPos + height)
+				ctx.lineTo(xPos, yPos)
+			}
 		} as const
 
-		positionsToPaint[pos]()
-		// ctx.fillStyle = 'black'
+		for (const key in edges) {
+			const assertedKey = key as keyof Square['edge']
+			if (!edges[assertedKey]) continue
+
+			ctx.beginPath()
+			edgeDrawers[assertedKey]()
+			ctx.stroke()
+			ctx.closePath()
+		}
 	}
 }

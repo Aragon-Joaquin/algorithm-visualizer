@@ -13,7 +13,7 @@ export function checkIfNodesEquals(curNode: Square, newNode: Square): boolean {
 		//doesnt need to update since it could break something
 		if (!(key in newNode['edge'])) return true
 
-		return newNode['edge'][key as SquareEdge] === curNode['edge'][key as SquareEdge]
+		if (newNode['edge'][key as SquareEdge] !== curNode['edge'][key as SquareEdge]) return false
 	}
 	return true
 }

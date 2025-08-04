@@ -15,17 +15,19 @@ export function initializeMaze(mazeProps: MazeProps): MazeNodes {
 	//clear everything
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
+	ctx.lineWidth = SThick
+	ctx.fillStyle = 'white'
+	ctx.strokeStyle = 'black'
+
 	maze.loopMaze((i, j) => {
 		const xPos = i * SWidth
 		const yPos = j * SHeight
 
-		//draw all borders
-		ctx.fillStyle = 'black'
-		ctx.fillRect(xPos - SThick, yPos - SThick, SWidth + SThick * 2, SHeight + SThick * 2)
-
 		//fill square white
-		ctx.fillStyle = 'white'
-		ctx.fillRect(xPos, yPos, SWidth - SThick, SHeight - SThick)
+		ctx.fillRect(xPos, yPos, SWidth, SHeight)
+
+		//draw all borders
+		ctx.strokeRect(xPos, yPos, SWidth, SHeight)
 
 		maze.MazeSize[j][i] = {
 			visited: false,
