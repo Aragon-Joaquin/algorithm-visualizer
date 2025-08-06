@@ -14,8 +14,6 @@ export class DisjointSet {
 			this.parent[i] = i
 			this.size.set(i, 1)
 		}
-
-		console.log(this.parent)
 	}
 
 	find(idNode: number) {

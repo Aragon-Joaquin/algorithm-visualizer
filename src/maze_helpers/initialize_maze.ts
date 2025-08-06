@@ -26,8 +26,8 @@ export function initializeMaze(mazeProps: MazeProps): MazeNodes {
 		//fill square white
 		ctx.fillRect(xPos, yPos, SWidth, SHeight)
 
-		//draw all borders
-		ctx.strokeRect(xPos, yPos, SWidth, SHeight)
+		// //draw all borders
+		// ctx.strokeRect(xPos, yPos, SWidth, SHeight)
 
 		maze.MazeSize[j][i] = {
 			visited: false,

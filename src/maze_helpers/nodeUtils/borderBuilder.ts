@@ -20,12 +20,10 @@ export function borderBuilder(
 	thick: number = 2
 ) {
 	ctx.fillStyle = 'white'
-	ctx.strokeStyle = 'white'
+	ctx.strokeStyle = 'black'
 	ctx.lineWidth = thick
 
 	return ({ edges }: { edges: Square['edge'] }) => {
-		// recreate empty square with no borders
-
 		const edgeDrawers = {
 			top: () => {
 				ctx.moveTo(xPos, yPos)
@@ -49,6 +47,7 @@ export function borderBuilder(
 			const assertedKey = key as keyof Square['edge']
 			if (!edges[assertedKey]) continue
 
+			//draw borders
 			ctx.beginPath()
 			edgeDrawers[assertedKey]()
 			ctx.stroke()

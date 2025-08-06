@@ -20,8 +20,6 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo | undefined, mazeProps: 
 			mNodes: prevMaze.current
 		})
 
-		console.log({ nMaze })
-
 		UpdateMaze(nMaze, mazeProps)
 		prevMaze.current = mazeInfo['Nodes']
 	}, [mazeInfo, mazeProps])
