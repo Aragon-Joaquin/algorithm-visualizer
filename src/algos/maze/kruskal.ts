@@ -24,7 +24,7 @@ export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes 
 		const yLevel = Math.floor(val / xAxis)
 		const xLevel = Math.floor(val % xAxis)
 
-		const neighbor = getAdjacentNode(maze, xAxis)
+		const neighbor = getAdjacentNode(maze, yAxis)
 		let discardingAxis = neighbor(yLevel, xLevel)
 
 		for (let i = 0; i < 4; i++) {
@@ -37,7 +37,10 @@ export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes 
 				//check if they belong to the same group.
 
 				//if they do, skip
-				if (disjointDS.find(val) === disjointDS.find(pos)) continue
+				if (disjointDS.find(val) === disjointDS.find(pos)) {
+					discardingAxis = discardingAxis.filter((_, j) => j != random)
+					continue
+				}
 
 				//if isn't, remove the wall and merge them
 				disjointDS.union(pos, val)
@@ -47,8 +50,6 @@ export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes 
 				maze[yLevel][xLevel].edge[assertedEdge] = false
 				resSquare.edge[OPPOSING_EDGES[assertedEdge]] = false
 				// resSquare.visited = true
-
-				break
 			}
 
 			discardingAxis = discardingAxis.filter((_, j) => j != random)
@@ -68,9 +69,9 @@ function getAdjacentNode(matrix: MazeNodes, yAxis: number) {
 	*/
 	return (y: number, pos: number) =>
 		Object.entries({
-			top: () => [calculatePos(y, pos), matrix[y - 1]?.[pos]] as [number, Square],
-			right: () => [calculatePos(y, pos), matrix[y]?.[pos + 1]] as [number, Square],
-			bottom: () => [calculatePos(y, pos), matrix[y + 1]?.[pos]] as [number, Square],
-			left: () => [calculatePos(y, pos), matrix[y]?.[pos - 1]] as [number, Square]
+			top: () => [calculatePos(y - 1, pos), matrix[y - 1]?.[pos]] as [number, Square],
+			right: () => [calculatePos(y, pos + 1), matrix[y]?.[pos + 1]] as [number, Square],
+			bottom: () => [calculatePos(y + 1, pos), matrix[y + 1]?.[pos]] as [number, Square],
+			left: () => [calculatePos(y, pos - 1), matrix[y]?.[pos - 1]] as [number, Square]
 		})
 }
