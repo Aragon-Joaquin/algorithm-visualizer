@@ -1,77 +1,70 @@
 import { DisjointSet } from '../../DStructures/DisjointSet'
-import type { MazeNodes, Square } from '../../types'
-import { OPPOSING_EDGES } from '../../utils'
+import type { MazeNodes } from '../../types'
 import type { MazeAlgoProps } from '../types'
-
-type randomPos = { pos: number; random: number }
-
-const getRandomPos = (elements: number) => Math.floor(Math.random() * elements)
-
-//! Kruskal's Algorithm
-export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
-	// this is a maze copy that later on be modified
-	const maze = mNodes.slice()
-
-	//disjoint checking, group A | group B
-	const disjointDS = new DisjointSet(xAxis * yAxis)
-
-	//NOTE: generate random array of non repeating numbers.
-	let randomPositions: (randomPos | number)[] = []
-	for (let i = 0; i < xAxis * yAxis; i++) randomPositions.push({ pos: i, random: Math.random() })
-
-	randomPositions = (randomPositions as randomPos[]).sort((a, b) => a.random - b.random).map((val) => val.pos)
-	;(randomPositions as number[]).forEach((val: number) => {
-		const yLevel = Math.floor(val / xAxis)
-		const xLevel = Math.floor(val % xAxis)
-
-		const neighbor = getAdjacentNode(maze, yAxis)
-		let discardingAxis = neighbor(yLevel, xLevel)
-
-		for (let i = 0; i < 4; i++) {
-			const random = getRandomPos(discardingAxis.length)
-			const [coord, square] = discardingAxis[random]
-
-			const [pos, resSquare] = square()
-
-			if (resSquare != undefined) {
-				//check if they belong to the same group.
-
-				//if they do, skip
-				if (disjointDS.find(val) === disjointDS.find(pos)) {
-					discardingAxis = discardingAxis.filter((_, j) => j != random)
-					continue
-				}
-
-				//if isn't, remove the wall and merge them
-				disjointDS.union(pos, val)
-
-				const assertedEdge = coord as keyof Square['edge']
-
-				maze[yLevel][xLevel].edge[assertedEdge] = false
-				resSquare.edge[OPPOSING_EDGES[assertedEdge]] = false
-				// resSquare.visited = true
-			}
-
-			discardingAxis = discardingAxis.filter((_, j) => j != random)
-		}
-	})
-
-	return maze
+interface Wall {
+	cell1: number
+	cell2: number
+	random: number
 }
 
-function getAdjacentNode(matrix: MazeNodes, yAxis: number) {
-	// this transform a matrix position number into an array pos number
-	// matrix[21][5] -> array[425]
-	const calculatePos = (row: number, col: number) => row * (yAxis - 1) + col
+export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
+	//copy the maze
+	const maze = structuredClone(mNodes)
 
-	/* is a bad idea recalculate every matrix[y] * 4 (top, right, left, bottom...),
-	so i made them into a function
-	*/
-	return (y: number, pos: number) =>
-		Object.entries({
-			top: () => [calculatePos(y - 1, pos), matrix[y - 1]?.[pos]] as [number, Square],
-			right: () => [calculatePos(y, pos + 1), matrix[y]?.[pos + 1]] as [number, Square],
-			bottom: () => [calculatePos(y + 1, pos), matrix[y + 1]?.[pos]] as [number, Square],
-			left: () => [calculatePos(y, pos - 1), matrix[y]?.[pos - 1]] as [number, Square]
-		})
+	//disjointed set
+	const ds = new DisjointSet(xAxis * yAxis)
+
+	// walls should be iterated and randomize in the kruskal algo
+	//* if the maze is 25*20 = 500 elements * 4 walls each = 2000 on total walls
+	//* 2000 - 90 (25*2 walls on Y axis + 20*2 walls on X axis) these walls are the most outer ones, so they don't have an adjacent)
+	const allWalls: Wall[] = []
+
+	// generate horizontal walls
+	for (let y = 0; y < yAxis - 1; y++) {
+		for (let x = 0; x < xAxis; x++) {
+			//creates a wall that connects two nodes
+			const cell1 = y * xAxis + x //top
+			const cell2 = (y + 1) * xAxis + x // below the cell1
+			allWalls.push({ cell1, cell2, random: Math.random() })
+		}
+	}
+
+	// generate vertical walls
+	for (let y = 0; y < yAxis; y++) {
+		for (let x = 0; x < xAxis - 1; x++) {
+			const cell1 = y * xAxis + x // left
+			const cell2 = y * xAxis + (x + 1) // adjacent to cell1
+			allWalls.push({ cell1, cell2, random: Math.random() })
+		}
+	}
+
+	//we shuffle them
+	allWalls.sort((a, b) => a.random - b.random)
+
+	for (const { cell1, cell2 } of allWalls) {
+		//check if they belong to the same group.
+		//if they do, skip
+		if (ds.find(cell1) === ds.find(cell2)) continue
+
+		//if not, remove the wall and merge them
+		ds.union(cell1, cell2)
+
+		// 1D indices back to 2D values
+		const [y1, x1] = [Math.floor(cell1 / xAxis), cell1 % xAxis]
+		const [y2, x2] = [Math.floor(cell2 / xAxis), cell2 % xAxis]
+
+		//if they're in the same row
+		if (x1 === x2) {
+			// horizontal wall
+			maze[y1][x1].edge.bottom = false
+			maze[y2][x2].edge.top = false
+			continue
+		}
+
+		// else, vertical wall
+		maze[y1][x1].edge.right = false
+		maze[y2][x2].edge.left = false
+	}
+
+	return maze
 }
