@@ -1,6 +1,7 @@
 //make it class if its complexity increases
 
 import type { Square } from '../../types'
+import { COLORS_SQUARE } from '../../utils'
 
 /**
  * @class
@@ -19,8 +20,8 @@ export function borderBuilder(
 	height: number,
 	thick: number = 2
 ) {
-	ctx.fillStyle = 'white'
-	ctx.strokeStyle = 'black'
+	ctx.fillStyle = COLORS_SQUARE.WHITE
+	ctx.strokeStyle = COLORS_SQUARE.BLACK
 	ctx.lineWidth = thick
 
 	return ({ edges }: { edges: Square['edge'] }) => {

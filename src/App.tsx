@@ -10,7 +10,11 @@ export default function App() {
 
 	useEffect(() => {
 		if (!mazeProps?.ctx) return
-		setMazeInfo({ Nodes: initializeMaze(mazeProps), Algorithm: MAZE_ALGORITHMS.Kruskal })
+		setMazeInfo({
+			Nodes: initializeMaze(mazeProps),
+			Algorithm: MAZE_ALGORITHMS.Kruskal,
+			EndPoint: mazeProps.XSquares * mazeProps.YSquares - 1
+		})
 	}, [mazeProps])
 
 	return (

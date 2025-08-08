@@ -1,4 +1,5 @@
 import type { MazeNodes, MazeProps } from '../types'
+import { COLORS_SQUARE } from '../utils'
 import { borderBuilder, createMazeSize } from './nodeUtils'
 
 // updateMaze/PaintMaze
@@ -16,7 +17,7 @@ export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
 		canvasWidth
 	} = mazeProps
 
-	ctx.fillStyle = 'white'
+	ctx.fillStyle = COLORS_SQUARE.WHITE
 
 	const mazeSize = new createMazeSize(XSquares, YSquares)
 

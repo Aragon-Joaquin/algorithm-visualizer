@@ -1,4 +1,5 @@
 import type { MazeNodes, MazeProps } from '../types'
+import { COLORS_SQUARE } from '../utils'
 import { createMazeSize } from './nodeUtils'
 
 export function initializeMaze(mazeProps: MazeProps): MazeNodes {
@@ -16,8 +17,8 @@ export function initializeMaze(mazeProps: MazeProps): MazeNodes {
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
 	ctx.lineWidth = SThick
-	ctx.fillStyle = 'white'
-	ctx.strokeStyle = 'black'
+	ctx.fillStyle = COLORS_SQUARE.WHITE
+	ctx.strokeStyle = COLORS_SQUARE.BLACK
 
 	maze.loopMaze((i, j) => {
 		const xPos = i * SWidth

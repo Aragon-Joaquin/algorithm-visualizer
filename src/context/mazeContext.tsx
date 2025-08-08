@@ -2,6 +2,7 @@ import { useLayoutEffect, useState, type ReactNode } from 'react'
 import { getSquareSizes } from '../maze_helpers/nodeUtils'
 import type { MazeInfo, MazeProps } from '../types'
 import { useTriggerMazeUpdate } from './hooks'
+import { useCanvasUtils } from './hooks/useCanvasUtils'
 import { defaultMazeProps, MazeContext } from './types'
 import { getCtx } from './utils'
 
@@ -14,16 +15,17 @@ export function MazeProvider({ children }: { children: ReactNode }) {
 	const [mazeInfo, setMazeInfo] = useState<MazeInfo>()
 
 	useTriggerMazeUpdate(mazeInfo, mazeProps)
+	const endpoint = useCanvasUtils(mazeProps)
 
 	//exec only once
 	useLayoutEffect(() => {
 		const canvas = getCtx()
 		if (!canvas) return
 
-		const { canvasHeight, canvasWidth } = canvas
+		const { canvasHeight, canvasWidth, ctx, canvasElement } = canvas
 		setMazeProps((prev) => ({
 			...prev,
-			...canvas,
+			...{ ctx, canvasHeight, canvasWidth, canvasElement },
 			SquareSizes: getSquareSizes(
 				{ width: canvasWidth, height: canvasHeight },
 				{ x: mazeProps.XSquares, y: mazeProps.YSquares }

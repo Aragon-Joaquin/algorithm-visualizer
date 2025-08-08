@@ -5,5 +5,5 @@ export const getCtx = () => {
 	if (!ctx || !canvas) return console.error('use a proper browser to view this page')
 	const canvasSizes = { canvasHeight: canvas.height, canvasWidth: canvas.width }
 
-	return { ...canvasSizes, ctx }
+	return { ...canvasSizes, ctx, canvasElement: canvas }
 }

@@ -10,6 +10,7 @@ export interface MazeProps {
 
 	SquareSizes: ReturnType<typeof getSquareSizes>
 	ctx: CanvasRenderingContext2D
+	canvasElement: HTMLCanvasElement
 }
 
 export interface Square {
@@ -26,5 +27,6 @@ export type MazeNodes = Square[][]
 
 export interface MazeInfo {
 	Nodes: MazeNodes
+	EndPoint: number // we save it as a 1d pos
 	Algorithm?: (typeof MAZE_ALGORITHMS)[keyof typeof MAZE_ALGORITHMS]
 }
