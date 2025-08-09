@@ -15,10 +15,9 @@ export function MazeProvider({ children }: { children: ReactNode }) {
 	const [mazeInfo, setMazeInfo] = useState<MazeInfo>()
 
 	// hooks
-	useTriggerMazeUpdate(mazeInfo, mazeProps)
+	const NMaze = useTriggerMazeUpdate(mazeInfo, mazeProps)
 	const endpoint = useCanvasUtils(mazeProps, mazeInfo)
 
-	console.log({ mazeInfo })
 	//exec only once
 	useLayoutEffect(() => {
 		const canvas = getCtx()
@@ -37,11 +36,16 @@ export function MazeProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		if (endpoint.x === -1 || endpoint.y === -1) return
-		// setMazeInfo((prev) => ({
-		// 	...(prev as MazeInfo),
-		// 	EndPoint: { x: endpoint.x, y: endpoint.y }
-		// }))
+
+		setMazeInfo((prev) => ({
+			...(prev as MazeInfo),
+			EndPoint: { x: endpoint.x, y: endpoint.y }
+		}))
 	}, [endpoint])
+
+	useEffect(() => {
+		setMazeInfo((prev) => ({ ...(prev as MazeInfo), Nodes: NMaze }))
+	}, [NMaze])
 
 	return (
 		<MazeContext.Provider

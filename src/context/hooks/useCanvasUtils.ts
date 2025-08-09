@@ -47,7 +47,7 @@ export function useCanvasUtils(mazeProps: MazeProps, mazeInfo: MazeInfo | undefi
 		canvasElement.addEventListener('click', listener)
 
 		return () => canvasElement.removeEventListener('click', listener)
-	}, [endpoint])
+	}, [mazeInfo])
 
 	return endpoint
 }

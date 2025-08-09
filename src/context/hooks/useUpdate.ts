@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { InitializeMazeAlgorithm } from '../../algos/types'
 import { createMazeSize, UpdateMaze } from '../../maze_helpers'
 import type { MazeInfo, MazeNodes, MazeProps } from '../../types'
@@ -8,7 +8,9 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo | undefined, mazeProps: 
  		i dont know how performance could affect this negatively if i declare each array space with an object TWICE
 		but i doubt making it unknown[][], would need to check each time if its null only for its initialization
 	*/
+
 	const prevMaze = useRef<MazeNodes>(new createMazeSize(mazeProps.XSquares, mazeProps.YSquares).fillMazeNodes())
+	const [newMaze, setNewMaze] = useState<MazeNodes>(prevMaze.current)
 
 	useEffect(() => {
 		if (!mazeInfo) return
@@ -20,6 +22,9 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo | undefined, mazeProps: 
 		})
 
 		UpdateMaze(nMaze, mazeProps)
+		setNewMaze(nMaze)
 		prevMaze.current = mazeInfo['Nodes']
-	}, [mazeProps, mazeInfo])
+	}, [mazeProps]) //mazeInfo
+
+	return newMaze
 }

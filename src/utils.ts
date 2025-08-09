@@ -14,7 +14,8 @@ export const COLORS_SQUARE = {
 	PURPLE: 'purple',
 	ORANGE: 'orange',
 	BLACK: 'black',
-	WHITE: 'white'
+	WHITE: 'white',
+	NONE: 'transparent'
 } as const
 
 /**

@@ -25,16 +25,21 @@ export class SquarePainter {
 	}
 
 	paintOne(
-		x: number,
-		y: number,
+		xMatrix: number,
+		yMatrix: number,
 		{ edges = defaultPaintOptions.edges, color = defaultPaintOptions.color }: PaintOptions = defaultPaintOptions
 	) {
+		// xMatrix and yMatrix represent the square's position in the maze grid (e.g., matrix[yPos][xPos]),
+		// not its pixel coordinates on the canvas.
+		const x = xMatrix * this.w
+		const y = yMatrix * this.h
+
 		//delete previous
-		this.ctx.clearRect(x, y * this.h, this.w + this.t * 2, this.h + this.t * 2)
+		this.ctx.clearRect(x + this.t / 2, y + this.t / 2, this.w - this.t, this.h - this.t)
 
 		//paint square
 		this.ctx.fillStyle = color as string
-		this.ctx.fillRect(x * this.w + this.t / 2, y * this.h + this.t / 2, this.w - this.t, this.h - this.t)
+		this.ctx.fillRect(x + this.t / 2, y + this.t / 2, this.w - this.t, this.h - this.t)
 
 		//border
 		this.borderBuilder(x, y, edges as Square['edge'])

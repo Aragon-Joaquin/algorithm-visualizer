@@ -23,11 +23,7 @@ export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
 	mazeSize.loopMaze((i, j) => {
-		const xPos = i * SWidth
-		const yPos = j * SHeight
-
 		const nSquare = newMaze[j][i]
-
-		paint.paintOne(xPos, yPos, { edges: nSquare.edge, color: COLORS_SQUARE.WHITE })
+		paint.paintOne(i, j, { edges: nSquare.edge, color: COLORS_SQUARE.NONE })
 	})
 }
