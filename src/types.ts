@@ -1,5 +1,5 @@
 import type { MAZE_ALGORITHMS } from './algos/types'
-import type { getSquareSizes } from './maze_helpers/nodeUtils'
+import type { getSquareSizes } from './maze_helpers'
 
 //NOTE: the difference between mazeProps & mazeInfo is explained in mazeContext.tsx
 export interface MazeProps {
@@ -27,6 +27,6 @@ export type MazeNodes = Square[][]
 
 export interface MazeInfo {
 	Nodes: MazeNodes
-	EndPoint: number // we save it as a 1d pos
+	EndPoint: { x: number; y: number } // we save it as a 1d pos
 	Algorithm?: (typeof MAZE_ALGORITHMS)[keyof typeof MAZE_ALGORITHMS]
 }

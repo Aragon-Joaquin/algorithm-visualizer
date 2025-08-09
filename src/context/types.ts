@@ -1,5 +1,5 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react'
-import { getSquareSizes } from '../maze_helpers/nodeUtils'
+import { getSquareSizes } from '../maze_helpers'
 import type { MazeInfo, MazeProps } from '../types'
 
 export const MazeContext = createContext({} as MazeContextType)

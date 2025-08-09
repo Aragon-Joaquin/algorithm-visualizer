@@ -56,6 +56,7 @@ export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes 
 		//if they're in the same row
 		if (x1 === x2) {
 			// horizontal wall
+
 			maze[y1][x1].edge.bottom = false
 			maze[y2][x2].edge.top = false
 			continue

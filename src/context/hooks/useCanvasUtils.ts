@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
-import type { MazeProps } from '../../types'
-import { COLORS_SQUARE, matrixToArray } from '../../utils'
+import { useEffect, useState } from 'react'
+import { SquarePainter } from '../../maze_helpers'
+import type { MazeInfo, MazeProps } from '../../types'
+import { COLORS_SQUARE } from '../../utils'
 
-export function useCanvasUtils(mazeProps: MazeProps) {
+export function useCanvasUtils(mazeProps: MazeProps, mazeInfo: MazeInfo | undefined) {
 	const {
 		canvasElement,
 		SquareSizes: { SWidth, SHeight, SThick },
@@ -11,34 +12,42 @@ export function useCanvasUtils(mazeProps: MazeProps) {
 		YSquares
 	} = mazeProps
 
-	const [endpoint, setEndpoint] = useState<number>(XSquares * YSquares - 1)
+	const [endpoint, setEndpoint] = useState<MazeInfo['EndPoint']>({ x: XSquares - 1, y: YSquares - 1 })
 
-	//is the callback even necessarily?
-	const listener = useCallback(
-		(e: MouseEvent) => {
-			e.preventDefault()
+	const listener = (e: MouseEvent) => {
+		e.preventDefault()
 
-			const rect = canvasElement.getBoundingClientRect()
-			const x = (e.clientX - rect.left) * (canvasElement.width / rect.width) // mouse location in canvas * scale factor
-			const y = (e.clientY - rect.top) * (canvasElement.height / rect.height)
+		const rect = canvasElement.getBoundingClientRect()
+		const x = (e.clientX - rect.left) * (canvasElement.width / rect.width) // mouse location in canvas * scale factor
+		const y = (e.clientY - rect.top) * (canvasElement.height / rect.height)
 
-			const posX = Math.floor(x / SWidth)
-			const posY = Math.floor(y / SHeight)
+		const posX = Math.floor(x / SWidth)
+		const posY = Math.floor(y / SHeight)
 
-			ctx.fillStyle = COLORS_SQUARE.RED
-			ctx.fillRect(posX * SWidth + SThick / 2, posY * SHeight + SThick / 2, SWidth - SThick, SHeight - SThick)
+		if (endpoint.x === posX && endpoint.y === posY) return
+		const paint = new SquarePainter(ctx, SWidth, SHeight, SThick)
 
-			setEndpoint(matrixToArray(posY, posX, mazeProps.YSquares))
-		},
-		[mazeProps]
-	)
+		//remove previous endpoint square
+		paint.paintOne(endpoint.x, endpoint.y, {
+			color: COLORS_SQUARE.WHITE,
+			edges: mazeInfo ? mazeInfo['Nodes'][endpoint.y][endpoint.x]['edge'] : undefined
+		})
+
+		//paint it again
+		paint.paintOne(posX, posY, {
+			color: COLORS_SQUARE.RED,
+			edges: mazeInfo ? mazeInfo['Nodes'][posY][posX]['edge'] : undefined
+		})
+
+		setEndpoint({ x: posX, y: posY })
+	}
 
 	useEffect(() => {
-		if (!canvasElement) return
+		if (!canvasElement || !mazeInfo) return
 		canvasElement.addEventListener('click', listener)
 
 		return () => canvasElement.removeEventListener('click', listener)
-	}, [mazeProps])
+	}, [endpoint])
 
 	return endpoint
 }

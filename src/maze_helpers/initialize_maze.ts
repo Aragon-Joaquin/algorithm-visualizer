@@ -1,6 +1,6 @@
 import type { MazeNodes, MazeProps } from '../types'
 import { COLORS_SQUARE } from '../utils'
-import { createMazeSize } from './nodeUtils'
+import { createMazeSize, SquarePainter } from './'
 
 export function initializeMaze(mazeProps: MazeProps): MazeNodes {
 	const {
@@ -16,19 +16,16 @@ export function initializeMaze(mazeProps: MazeProps): MazeNodes {
 	//clear everything
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
-	ctx.lineWidth = SThick
 	ctx.fillStyle = COLORS_SQUARE.WHITE
 	ctx.strokeStyle = COLORS_SQUARE.BLACK
 
+	const paint = new SquarePainter(ctx, SWidth, SHeight, SThick)
 	maze.loopMaze((i, j) => {
 		const xPos = i * SWidth
 		const yPos = j * SHeight
 
 		//fill square white
-		ctx.fillRect(xPos, yPos, SWidth, SHeight)
-
-		// //draw all borders
-		// ctx.strokeRect(xPos, yPos, SWidth, SHeight)
+		paint.paintOne(xPos, yPos)
 
 		maze.MazeSize[j][i] = {
 			visited: false,

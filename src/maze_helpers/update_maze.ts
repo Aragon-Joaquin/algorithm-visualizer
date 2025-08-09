@@ -1,13 +1,12 @@
+import { createMazeSize, SquarePainter } from '../maze_helpers'
 import type { MazeNodes, MazeProps } from '../types'
 import { COLORS_SQUARE } from '../utils'
-import { borderBuilder, createMazeSize } from './nodeUtils'
 
 // updateMaze/PaintMaze
 // newMaze = new maze (overlaps over the current one)
 
 export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
-	if (!newMaze) return
-
+	if (!newMaze || !mazeProps.ctx) return
 	const {
 		SquareSizes: { SHeight, SWidth, SThick },
 		XSquares,
@@ -17,9 +16,8 @@ export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
 		canvasWidth
 	} = mazeProps
 
-	ctx.fillStyle = COLORS_SQUARE.WHITE
-
 	const mazeSize = new createMazeSize(XSquares, YSquares)
+	const paint = new SquarePainter(ctx, SWidth, SHeight, SThick)
 
 	// clear the entire canvas to repaint everything again (fix this later)
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
@@ -29,7 +27,7 @@ export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
 		const yPos = j * SHeight
 
 		const nSquare = newMaze[j][i]
-		const BBuilder = borderBuilder(ctx, xPos, yPos, SWidth, SHeight, SThick)
-		BBuilder({ edges: nSquare['edge'] })
+
+		paint.paintOne(xPos, yPos, { edges: nSquare.edge, color: COLORS_SQUARE.WHITE })
 	})
 }

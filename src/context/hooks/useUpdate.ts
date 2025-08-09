@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { InitializeMazeAlgorithm } from '../../algos/types'
-import { UpdateMaze } from '../../maze_helpers'
-import { createMazeSize } from '../../maze_helpers/nodeUtils'
+import { createMazeSize, UpdateMaze } from '../../maze_helpers'
 import type { MazeInfo, MazeNodes, MazeProps } from '../../types'
 
 export function useTriggerMazeUpdate(mazeInfo: MazeInfo | undefined, mazeProps: MazeProps) {
@@ -22,5 +21,5 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo | undefined, mazeProps: 
 
 		UpdateMaze(nMaze, mazeProps)
 		prevMaze.current = mazeInfo['Nodes']
-	}, [mazeInfo, mazeProps])
+	}, [mazeProps, mazeInfo])
 }

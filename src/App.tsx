@@ -13,7 +13,7 @@ export default function App() {
 		setMazeInfo({
 			Nodes: initializeMaze(mazeProps),
 			Algorithm: MAZE_ALGORITHMS.Kruskal,
-			EndPoint: mazeProps.XSquares * mazeProps.YSquares - 1
+			EndPoint: { x: mazeProps.XSquares - 1, y: mazeProps.YSquares - 1 }
 		})
 	}, [mazeProps])
 
