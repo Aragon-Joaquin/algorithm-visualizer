@@ -21,7 +21,7 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo | undefined, mazeProps: 
 			mNodes: prevMaze.current
 		})
 
-		UpdateMaze(nMaze, mazeProps)
+		UpdateMaze(nMaze, mazeProps, mazeInfo.EndPoint)
 		setNewMaze(nMaze)
 		prevMaze.current = mazeInfo['Nodes']
 	}, [mazeProps]) //mazeInfo

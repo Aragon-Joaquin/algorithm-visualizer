@@ -35,7 +35,8 @@ export class SquarePainter {
 		const y = yMatrix * this.h
 
 		//delete previous
-		this.ctx.clearRect(x + this.t / 2, y + this.t / 2, this.w - this.t, this.h - this.t)
+		// TODO: there's a visual error when deleting a square that has no walls on its edges, since the thick is 50% inside of the square
+		this.ctx.clearRect(x, y, this.w + Math.floor(this.t / 2), this.h + Math.floor(this.t / 2))
 
 		//paint square
 		this.ctx.fillStyle = color as string

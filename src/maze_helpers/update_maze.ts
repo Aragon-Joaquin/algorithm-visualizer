@@ -1,11 +1,11 @@
 import { createMazeSize, SquarePainter } from '../maze_helpers'
-import type { MazeNodes, MazeProps } from '../types'
+import type { MazeInfo, MazeNodes, MazeProps } from '../types'
 import { COLORS_SQUARE } from '../utils'
 
 // updateMaze/PaintMaze
 // newMaze = new maze (overlaps over the current one)
 
-export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
+export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps, endpoint: MazeInfo['EndPoint']) {
 	if (!newMaze || !mazeProps.ctx) return
 	const {
 		SquareSizes: { SHeight, SWidth, SThick },
@@ -24,6 +24,9 @@ export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps) {
 
 	mazeSize.loopMaze((i, j) => {
 		const nSquare = newMaze[j][i]
-		paint.paintOne(i, j, { edges: nSquare.edge, color: COLORS_SQUARE.NONE })
+		paint.paintOne(i, j, {
+			edges: nSquare.edge,
+			color: endpoint.x === i && endpoint.y === j ? COLORS_SQUARE.GREEN : COLORS_SQUARE.WHITE
+		})
 	})
 }
