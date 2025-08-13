@@ -1,9 +1,9 @@
-import type { MazeNodes } from '../../types'
+import type { MazeNodes, Square } from '../../types'
 
 export class createMazeSize {
 	XSquares: number
 	YSquares: number
-	MazeSize: unknown[][]
+	MazeSize: Square[][] //this was unknown [][]
 
 	constructor(XSquares: number, YSquares: number) {
 		this.XSquares = XSquares > 0 ? XSquares : 0
@@ -22,7 +22,8 @@ export class createMazeSize {
 	fillMazeNodes() {
 		this.loopMaze((i, j) => {
 			this.MazeSize[j][i] = {
-				visited: false,
+				x: i,
+				y: j,
 				edge: { top: true, right: true, bottom: true, left: true }
 			}
 		})

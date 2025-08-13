@@ -1,12 +1,15 @@
-import type { MazeNodes } from '../types'
+import type { MazeInfo, MazeNodes, MazeProps } from '../types'
 import { mazeKruskal } from './maze'
+import { traversalDFS } from './traversal'
 
 // for all functions: (xAxis: number, yAxis: number, m: MazeNodes)
 export const MAZE_ALGORITHMS = {
 	Kruskal: mazeKruskal
 } as const
 
-export const PATHFINDING_ALGOS = {} as const
+export const TRAVERSAL_ALGORITHMS = {
+	DFS: traversalDFS
+} as const
 
 // just
 export const InitializeMazeAlgorithm = (
@@ -19,4 +22,11 @@ export interface MazeAlgoProps {
 	xAxis: number
 	yAxis: number
 	mNodes: MazeNodes
+}
+
+export interface TraversalProps {
+	EndPoint: MazeInfo['EndPoint']
+	StartPoint: MazeInfo['StartPoint']
+	Nodes: MazeNodes
+	MazeProps: MazeProps
 }

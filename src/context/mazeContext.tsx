@@ -3,7 +3,7 @@ import { getSquareSizes } from '../maze_helpers'
 import type { MazeInfo, MazeProps } from '../types'
 import { useTriggerMazeUpdate } from './hooks'
 import { useCanvasUtils } from './hooks/useCanvasUtils'
-import { defaultMazeProps, MazeContext } from './types'
+import { defaultMazeInfo, defaultMazeProps, MazeContext } from './types'
 import { getCtx } from './utils'
 
 //TODO: make reducer?
@@ -12,7 +12,7 @@ export function MazeProvider({ children }: { children: ReactNode }) {
 	const [mazeProps, setMazeProps] = useState<MazeProps>(defaultMazeProps)
 
 	//NOTE: meanwhile mazeInfo causes an update.
-	const [mazeInfo, setMazeInfo] = useState<MazeInfo>()
+	const [mazeInfo, setMazeInfo] = useState<MazeInfo>(defaultMazeInfo)
 
 	// hooks
 	const NMaze = useTriggerMazeUpdate(mazeInfo, mazeProps)
@@ -35,7 +35,8 @@ export function MazeProvider({ children }: { children: ReactNode }) {
 	}, [])
 
 	useEffect(() => {
-		if (endpoint.x === -1 || endpoint.y === -1) return
+		//cannot be the start point
+		if (endpoint.x <= 0 || endpoint.y <= 0) return
 
 		setMazeInfo((prev) => ({
 			...(prev as MazeInfo),

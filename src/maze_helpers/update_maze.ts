@@ -5,7 +5,12 @@ import { COLORS_SQUARE } from '../utils'
 // updateMaze/PaintMaze
 // newMaze = new maze (overlaps over the current one)
 
-export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps, endpoint: MazeInfo['EndPoint']) {
+export function UpdateMaze(
+	newMaze: MazeNodes | null,
+	mazeProps: MazeProps,
+	endpoint: MazeInfo['EndPoint'],
+	startPoint: MazeInfo['StartPoint']
+) {
 	if (!newMaze || !mazeProps.ctx) return
 	const {
 		SquareSizes: { SHeight, SWidth, SThick },
@@ -23,10 +28,18 @@ export function UpdateMaze(newMaze: MazeNodes | null, mazeProps: MazeProps, endp
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
 	mazeSize.loopMaze((i, j) => {
+		//very bad code
+		const condition =
+			startPoint.x === i && startPoint.y === j
+				? COLORS_SQUARE.ORANGE
+				: endpoint.x === i && endpoint.y === j
+				? COLORS_SQUARE.GREEN
+				: COLORS_SQUARE.WHITE
+
 		const nSquare = newMaze[j][i]
 		paint.paintOne(i, j, {
 			edges: nSquare.edge,
-			color: endpoint.x === i && endpoint.y === j ? COLORS_SQUARE.GREEN : COLORS_SQUARE.WHITE
+			color: condition
 		})
 	})
 }

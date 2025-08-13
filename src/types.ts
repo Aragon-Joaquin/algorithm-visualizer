@@ -14,7 +14,8 @@ export interface MazeProps {
 }
 
 export interface Square {
-	visited: boolean
+	x: number
+	y: number
 	edge: {
 		top: boolean
 		right: boolean
@@ -25,8 +26,11 @@ export interface Square {
 
 export type MazeNodes = Square[][]
 
+export type mazeCoords = { x: number; y: number }
+
 export interface MazeInfo {
 	Nodes: MazeNodes
-	EndPoint: { x: number; y: number } // we save it as a 1d pos
+	EndPoint: mazeCoords
+	StartPoint: mazeCoords
 	Algorithm?: (typeof MAZE_ALGORITHMS)[keyof typeof MAZE_ALGORITHMS]
 }
