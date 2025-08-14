@@ -6,58 +6,47 @@ import type { TraversalProps } from '../types'
 export function traversalDFS({ StartPoint, EndPoint, Nodes, MazeProps }: TraversalProps): mazeCoords[] {
 	const {
 		ctx,
-		SquareSizes: { SWidth, SHeight, SThick }
+		SquareSizes: { SWidth, SHeight, SThick },
+		XSquares,
+		YSquares
 	} = MazeProps
 
-	const Stack: mazeCoords[] = [StartPoint]
-	const Visited: mazeCoords[] = [StartPoint]
 	const painter = new SquarePainter(ctx, SWidth, SHeight, SThick)
+	const path: mazeCoords[] = []
+	const visited: boolean[][] = Array.from({ length: YSquares }, () => Array(XSquares).fill(false))
 
-	const NUMBER_OF_EDGES = 3 as const
-
-	// prevWall: keyof Square['edge'] | undefined = undefined
-	const recursive = (node: mazeCoords | undefined) => {
-		if (!node) return
+	const recursive = (node: mazeCoords): boolean => {
 		const { x, y } = node
 
-		if (x === EndPoint.x && y === EndPoint.y) return Stack.push({ x, y })
+		//if visited, return
+		if (visited[y][x]) return false
 
-		const currentNode = Nodes?.[y]?.[x]
-		console.log({ currentNode })
+		visited[y][x] = true
+		path.push(node)
+		painter.paintOne(x, y, { color: COLORS_SQUARE.YELLOW, edges: Nodes[y][x].edge })
 
-		for (let i = 0; i < NUMBER_OF_EDGES; i++) {
-			const assertedEdge = Object.keys(currentNode.edge)[i] as keyof Square['edge']
-			console.log(assertedEdge)
+		if (x === EndPoint.x && y === EndPoint.y) return true
 
-			// check is has a wall
-			if (currentNode?.edge[assertedEdge] ?? true) continue
+		const currentNode = Nodes[y][x]
 
-			console.log('passed')
+		for (const edge in currentNode.edge) {
+			const assertedEdge = edge as keyof Square['edge']
+
+			//if there's a wall, continue
+			if (currentNode.edge[assertedEdge]) continue
+
 			const adjacentNode = getAdjacentNode(Nodes, y, x)[assertedEdge]()
-			if (!adjacentNode) continue
 
-			const adjCords: mazeCoords = { x: adjacentNode.x, y: adjacentNode.y }
-
-			//improve this find method by using a map or just accessing the prop by visited[matrixToArray(x,y)]
-			const hasBeenVisited = Visited.find((e) => e.x === adjCords.x && e.y === adjCords.y)
-
-			if (hasBeenVisited != undefined) {
-				recursive(Stack.pop())
-				break
-			}
-
-			//push it to stack
-			Stack.push(adjCords)
-			Visited.push(adjCords)
-
-			recursive(adjCords)
-			break
+			//calls recursive again to check if the node its visited.
+			// if its is, backs up  one square
+			if (adjacentNode && recursive({ x: adjacentNode.x, y: adjacentNode.y })) return true
 		}
 
-		painter.paintOne(currentNode.x, currentNode.y, { edges: currentNode.edge, color: COLORS_SQUARE.YELLOW })
+		path.pop()
+		painter.paintOne(x, y, { color: COLORS_SQUARE.WHITE, edges: currentNode.edge })
+		return false
 	}
 
-	recursive(Stack.at(-1))
-
-	return Stack
+	recursive(StartPoint)
+	return path
 }

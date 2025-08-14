@@ -36,7 +36,7 @@ export function MazeProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		//cannot be the start point
-		if (endpoint.x <= 0 || endpoint.y <= 0) return
+		if (endpoint.x < 0 || endpoint.y < 0) return
 
 		setMazeInfo((prev) => ({
 			...(prev as MazeInfo),
