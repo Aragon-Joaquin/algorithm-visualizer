@@ -1,5 +1,5 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react'
-import { MAZE_ALGORITHMS } from '../algos/types'
+import { MAZE_ALGORITHMS } from '../algos'
 import { getSquareSizes } from '../maze_helpers'
 import type { MazeInfo, MazeProps } from '../types'
 

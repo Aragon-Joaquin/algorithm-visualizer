@@ -3,7 +3,7 @@ import type { mazeCoords, Square } from '../../types'
 import { COLORS_SQUARE } from '../../utils'
 import type { TraversalProps } from '../types'
 
-export function traversalDFS({ StartPoint, EndPoint, Nodes, MazeProps }: TraversalProps): mazeCoords[] {
+export function traversalDFS({ Path, EndPoint, Nodes, MazeProps }: TraversalProps) {
 	const {
 		ctx,
 		SquareSizes: { SWidth, SHeight, SThick },
@@ -12,20 +12,22 @@ export function traversalDFS({ StartPoint, EndPoint, Nodes, MazeProps }: Travers
 	} = MazeProps
 
 	const painter = new SquarePainter(ctx, SWidth, SHeight, SThick)
-	const path: mazeCoords[] = []
 	const visited: boolean[][] = Array.from({ length: YSquares }, () => Array(XSquares).fill(false))
 
-	const recursive = (node: mazeCoords): boolean => {
+	return function* recursive(node: mazeCoords): Generator<void | true, void> {
 		const { x, y } = node
 
 		//if visited, return
-		if (visited[y][x]) return false
+		if (visited[y][x]) return
+
+		//wait for ui to update
+		yield
 
 		visited[y][x] = true
-		path.push(node)
-		painter.paintOne(x, y, { color: COLORS_SQUARE.YELLOW, edges: Nodes[y][x].edge })
+		Path.push(node)
+		painter.paintOne(x, y, { color: COLORS_SQUARE.ORANGE, edges: Nodes[y][x].edge })
 
-		if (x === EndPoint.x && y === EndPoint.y) return true
+		if (x === EndPoint.x && y === EndPoint.y) yield true
 
 		const currentNode = Nodes[y][x]
 
@@ -39,14 +41,13 @@ export function traversalDFS({ StartPoint, EndPoint, Nodes, MazeProps }: Travers
 
 			//calls recursive again to check if the node its visited.
 			// if its is, backs up  one square
-			if (adjacentNode && recursive({ x: adjacentNode.x, y: adjacentNode.y })) return true
+			if (adjacentNode && !visited[adjacentNode.y][adjacentNode.x]) {
+				painter.paintOne(adjacentNode.x, adjacentNode.y, { color: COLORS_SQUARE.RED, edges: adjacentNode.edge })
+				yield* recursive({ x: adjacentNode.x, y: adjacentNode.y })
+			}
 		}
 
-		path.pop()
+		Path.pop()
 		painter.paintOne(x, y, { color: COLORS_SQUARE.WHITE, edges: currentNode.edge })
-		return false
 	}
-
-	recursive(StartPoint)
-	return path
 }

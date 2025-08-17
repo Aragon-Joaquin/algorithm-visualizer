@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { InitializeMazeAlgorithm } from '../../algos/types'
+import { InitializeMazeAlgorithm } from '../../algos'
 import { createMazeSize, UpdateMaze } from '../../maze_helpers'
 import type { MazeInfo, MazeNodes, MazeProps } from '../../types'
 
