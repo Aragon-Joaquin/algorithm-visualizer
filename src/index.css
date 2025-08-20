@@ -30,6 +30,7 @@ body {
 #main-canvas {
 	display: block;
 
+	border-radius: 5px;
 	max-width: 1280px;
 	max-height: 720px;
 

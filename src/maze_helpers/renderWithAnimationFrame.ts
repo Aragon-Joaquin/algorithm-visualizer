@@ -1,10 +1,10 @@
 import type { MazeProps, Square } from '../types'
-import { INTERVAL_VEL, type COLORS_SQUARE } from '../utils'
+import { CalculatePerformanceNow, INTERVAL_VEL, type CalculatePerformanceType, type COLORS_SQUARE } from '../utils'
 import { SquarePainter } from './SquarePainter'
 
 const CHANNEL_NAME = 'RenderWithAnimationFrame' as const
 
-export type queueEvent = { timePassed: number }
+export type queueEvent = { timePassed: CalculatePerformanceType }
 export type squarePainted = Square & { color: (typeof COLORS_SQUARE)[keyof typeof COLORS_SQUARE] }
 
 export class RenderWithAnimationFrame {
@@ -25,14 +25,12 @@ export class RenderWithAnimationFrame {
 		RenderWithAnimationFrame.continueExec = true
 		const { SWidth, SHeight, SThick } = this.SquareProps
 		const painter = new SquarePainter(this.ctx, SWidth, SHeight, SThick)
-		const timeCounter = performance.now()
+		const calcTime = CalculatePerformanceNow()
 
 		const render = async () => {
 			if (!this.queueToPaint.length || !RenderWithAnimationFrame.continueExec) {
 				//ADD EVENT HERE!
-				dispatchEvent(
-					new CustomEvent<queueEvent>(CHANNEL_NAME, { detail: { timePassed: timeCounter - performance.now() } })
-				)
+				dispatchEvent(new CustomEvent<queueEvent>(CHANNEL_NAME, { detail: { timePassed: calcTime() } }))
 				return RenderWithAnimationFrame.stopIterating()
 			}
 
@@ -52,9 +50,9 @@ export class RenderWithAnimationFrame {
 
 	pushToPaint = (square: squarePainted) => this.queueToPaint.push(square)
 
-	static suscribeToEvent = (cb: (args: CustomEvent<queueEvent>) => void) =>
+	static subscribeToEvent = (cb: (args: CustomEvent<queueEvent>) => void) =>
 		addEventListener(CHANNEL_NAME, (args) => cb(args as CustomEvent))
 
-	static unsuscribeToEvent = (cb: (args: CustomEvent<queueEvent>) => void) =>
+	static unsubscribeToEvent = (cb: (args: CustomEvent<queueEvent>) => void) =>
 		removeEventListener(CHANNEL_NAME, (args) => cb(args as CustomEvent))
 }

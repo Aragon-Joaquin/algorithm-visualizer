@@ -1,5 +1,6 @@
 import { RenderWithAnimationFrame } from '../maze_helpers/renderWithAnimationFrame'
 import type { MazeInfo } from '../types'
+import { CalculatePerformanceNow } from '../utils'
 import { mazeKruskal } from './maze'
 import { traversalDFS } from './traversal'
 import type { MazeAlgoProps, TraversalProps } from './types'
@@ -36,7 +37,7 @@ export async function InitializeMazeTraversal({
 	const genFunc = !Algorithm ? TRAVERSAL_ALGORITHMS.DFS : TRAVERSAL_ALGORITHMS[Algorithm]
 	const firstCall = genFunc({ EndPoint, Nodes, MazeProps, Path: [] })(StartPoint)
 
-	const timeNow = performance.now()
+	const calcTime = CalculatePerformanceNow()
 	const animationF = new RenderWithAnimationFrame(ctx, SquareSizes)
 
 	//yield squarePainted/void on the value if the endpoint is found
@@ -51,5 +52,5 @@ export async function InitializeMazeTraversal({
 	//then we render it until the queue is empty
 	animationF.renderSquare()
 
-	return timeNow - performance.now()
+	return calcTime()
 }

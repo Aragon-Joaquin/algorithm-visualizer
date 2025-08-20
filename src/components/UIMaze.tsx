@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { TRAVERSAL_ALGORITHMS } from '../algos'
-import { useMazeUI } from '../hooks/useMazeUI'
-import { RenderWithAnimationFrame } from '../maze_helpers/renderWithAnimationFrame'
-import { INTERVAL_VEL } from '../utils'
+import { useMazeUI } from '../hooks'
+import { RenderWithAnimationFrame } from '../maze_helpers'
+import { INTERVAL_VEL } from '../utils/declarations'
 
 export function UIMaze() {
 	const traversalSelect = useRef<HTMLSelectElement>(null)

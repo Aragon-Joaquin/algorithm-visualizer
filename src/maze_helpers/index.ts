@@ -9,4 +9,5 @@ export * from './nodeUtils/getAdjacentNodes'
 export * from './nodeUtils/getSquareSizes'
 
 //painters
+export * from './renderWithAnimationFrame'
 export * from './SquarePainter'

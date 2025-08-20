@@ -1,6 +1,6 @@
 import { createMazeSize, SquarePainter } from '../maze_helpers'
 import type { MazeInfo, MazeNodes, MazeProps } from '../types'
-import { COLORS_SQUARE } from '../utils'
+import { COLORS_SQUARE } from '../utils/declarations'
 
 // updateMaze/PaintMaze
 // newMaze = new maze (overlaps over the current one)

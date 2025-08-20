@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { SquarePainter } from '../../maze_helpers'
 import type { MazeInfo, MazeProps } from '../../types'
-import { COLORS_SQUARE } from '../../utils'
+import { COLORS_SQUARE } from '../../utils/declarations'
 
 export function useCanvasUtils(mazeProps: MazeProps, mazeInfo: MazeInfo | undefined) {
 	const {

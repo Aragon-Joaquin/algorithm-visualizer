@@ -1,7 +1,7 @@
 import { getAdjacentNode } from '../../maze_helpers'
 import type { squarePainted } from '../../maze_helpers/renderWithAnimationFrame'
 import type { mazeCoords, Square } from '../../types'
-import { COLORS_SQUARE } from '../../utils'
+import { COLORS_SQUARE } from '../../utils/declarations'
 import type { TraversalProps } from '../types'
 
 export function traversalDFS({ Path, EndPoint, Nodes, MazeProps }: TraversalProps) {

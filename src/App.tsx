@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { MAZE_ALGORITHMS } from './algos'
-import { UIMaze } from './components/buttons'
+import { StatusBar, UIMaze } from './components'
 import { useMazeContext } from './hooks'
 import { initializeMaze } from './maze_helpers'
 //@ts-expect-error: css
@@ -21,7 +21,7 @@ export default function App() {
 
 	return (
 		<main className="flex flex-col items-center justify-center gap-4 w-screen">
-			<h5 className="text-2xl">Maze generator</h5>
+			<StatusBar />
 			<section className="flex flex-row justify-center items-center w-screen gap-4">
 				<canvas id="main-canvas" width="1280" height="720"></canvas>
 

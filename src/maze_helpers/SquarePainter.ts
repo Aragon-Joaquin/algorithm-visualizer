@@ -1,5 +1,5 @@
 import type { Square } from '../types'
-import { COLORS_SQUARE } from '../utils'
+import { COLORS_SQUARE } from '../utils/declarations'
 
 interface PaintOptions {
 	edges?: Square['edge']

@@ -1,35 +1,49 @@
 import { useEffect, useState } from 'react'
 import { InitializeMazeTraversal, type TRAVERSAL_ALGORITHMS } from '../algos'
-import { UpdateMaze } from '../maze_helpers'
-import { RenderWithAnimationFrame, type queueEvent } from '../maze_helpers/renderWithAnimationFrame'
-import { useMazeContext } from './useMazeContext'
+import { RenderWithAnimationFrame, UpdateMaze, type queueEvent } from '../maze_helpers'
+import type { CalculatePerformanceType } from '../utils'
+import { useMazeContext } from './'
+
+interface paintStatusType {
+	pending: boolean
+	completed: boolean
+	time: CalculatePerformanceType
+}
 
 export function useMazeUI() {
 	const { mazeProps, mazeInfo } = useMazeContext()
 
-	const [paintStatus, setPaintStatus] = useState({ pending: false, completed: false, time: 0 })
+	const [paintStatus, setPaintStatus] = useState<paintStatusType>({
+		pending: false,
+		completed: false,
+		time: ['0', 'ms']
+	})
+
+	const [algoStatus, setAlgoStatus] = useState<{ time: CalculatePerformanceType }>()
 
 	const handleTraversal = async (traversalSelect: HTMLSelectElement | null) => {
 		if (!traversalSelect) return
 		setPaintStatus((prev) => ({ ...prev, completed: false, pending: true }))
-		await InitializeMazeTraversal({
+		const time = await InitializeMazeTraversal({
 			Algorithm: traversalSelect!.value as keyof typeof TRAVERSAL_ALGORITHMS,
 			EndPoint: mazeInfo?.EndPoint,
 			StartPoint: mazeInfo?.StartPoint,
 			Nodes: mazeInfo?.Nodes,
 			MazeProps: mazeProps
 		})
+
+		setAlgoStatus((prev) => ({ ...prev, time }))
 	}
 
 	useEffect(() => {
 		function handlePending(args: CustomEvent<queueEvent>) {
-			setPaintStatus({ pending: false, completed: true, time: args.detail?.timePassed ?? 0 })
+			setPaintStatus({ pending: false, completed: true, time: args.detail?.timePassed ?? ['0', 'ms'] })
 		}
 
-		RenderWithAnimationFrame.suscribeToEvent(handlePending)
+		RenderWithAnimationFrame.subscribeToEvent(handlePending)
 
-		return RenderWithAnimationFrame.unsuscribeToEvent(handlePending)
-	})
+		return RenderWithAnimationFrame.unsubscribeToEvent(handlePending)
+	}, [])
 
 	const clearTraversal = () => {
 		RenderWithAnimationFrame.stopIterating()
@@ -40,5 +54,5 @@ export function useMazeUI() {
 		}, 60)
 	}
 
-	return { handleTraversal, clearTraversal, paintStatus }
+	return { handleTraversal, clearTraversal, paintStatus, algoStatus }
 }
