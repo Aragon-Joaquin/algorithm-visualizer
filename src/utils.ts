@@ -18,6 +18,11 @@ export const COLORS_SQUARE = {
 	NONE: 'transparent'
 } as const
 
+export const INTERVAL_VEL = {
+	MAX: 999,
+	MIN: 10
+} as const
+
 /**
  * @description transforms a matrix index number into a array index, e.x.: matrix[5][10] (if yAxis is 20) would be array[110]
  * @param yAxis total of columns in the maze

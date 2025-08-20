@@ -1,3 +1,4 @@
+import { RenderWithAnimationFrame } from '../maze_helpers/renderWithAnimationFrame'
 import type { MazeInfo } from '../types'
 import { mazeKruskal } from './maze'
 import { traversalDFS } from './traversal'
@@ -21,7 +22,6 @@ export const InitializeMazeAlgorithm = (
 type InitializeTraversal = Omit<TraversalProps, 'Path'> & {
 	Algorithm: keyof typeof TRAVERSAL_ALGORITHMS | undefined
 	StartPoint: MazeInfo['StartPoint']
-	Interval?: number
 }
 
 export async function InitializeMazeTraversal({
@@ -29,18 +29,27 @@ export async function InitializeMazeTraversal({
 	EndPoint,
 	StartPoint,
 	Nodes,
-	MazeProps,
-	Interval = 50
+	MazeProps
 }: InitializeTraversal) {
+	const { ctx, SquareSizes } = MazeProps
+
 	const genFunc = !Algorithm ? TRAVERSAL_ALGORITHMS.DFS : TRAVERSAL_ALGORITHMS[Algorithm]
 	const firstCall = genFunc({ EndPoint, Nodes, MazeProps, Path: [] })(StartPoint)
 
-	const timeNow = Date.now()
+	const timeNow = performance.now()
+	const animationF = new RenderWithAnimationFrame(ctx, SquareSizes)
 
-	//yield true on the value if the endpoint is found
-	while (!firstCall.next().value) {
-		await new Promise((resolve) => setTimeout(resolve, Interval))
+	//yield squarePainted/void on the value if the endpoint is found
+	while (true) {
+		const res = firstCall.next()
+		if (res.value != undefined) animationF.pushToPaint(res.value)
+		else break
 	}
 
-	return (Date.now() - timeNow) / 1000 //1000 milliseconds
+	console.log('totalPaintIterations: ', animationF.queueToPaint.length)
+
+	//then we render it until the queue is empty
+	animationF.renderSquare()
+
+	return timeNow - performance.now()
 }

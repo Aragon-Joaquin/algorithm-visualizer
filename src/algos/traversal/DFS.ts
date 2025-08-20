@@ -1,33 +1,27 @@
-import { getAdjacentNode, SquarePainter } from '../../maze_helpers'
+import { getAdjacentNode } from '../../maze_helpers'
+import type { squarePainted } from '../../maze_helpers/renderWithAnimationFrame'
 import type { mazeCoords, Square } from '../../types'
 import { COLORS_SQUARE } from '../../utils'
 import type { TraversalProps } from '../types'
 
 export function traversalDFS({ Path, EndPoint, Nodes, MazeProps }: TraversalProps) {
-	const {
-		ctx,
-		SquareSizes: { SWidth, SHeight, SThick },
-		XSquares,
-		YSquares
-	} = MazeProps
+	const { XSquares, YSquares } = MazeProps
 
-	const painter = new SquarePainter(ctx, SWidth, SHeight, SThick)
 	const visited: boolean[][] = Array.from({ length: YSquares }, () => Array(XSquares).fill(false))
 
-	return function* recursive(node: mazeCoords): Generator<void | true, void> {
+	//we yield for each time we want to paint a square
+	return function* recursive(node: mazeCoords): Generator<squarePainted | void, void> {
 		const { x, y } = node
 
 		//if visited, return
 		if (visited[y][x]) return
 
-		//wait for ui to update
-		yield
-
+		//update and yield for ui to paint
 		visited[y][x] = true
 		Path.push(node)
-		painter.paintOne(x, y, { color: COLORS_SQUARE.ORANGE, edges: Nodes[y][x].edge })
+		yield { x, y, color: COLORS_SQUARE.ORANGE, edge: Nodes[y][x].edge }
 
-		if (x === EndPoint.x && y === EndPoint.y) yield true
+		if (x === EndPoint.x && y === EndPoint.y) yield //yield nothing for stop signal
 
 		const currentNode = Nodes[y][x]
 
@@ -42,12 +36,12 @@ export function traversalDFS({ Path, EndPoint, Nodes, MazeProps }: TraversalProp
 			//calls recursive again to check if the node its visited.
 			// if its is, backs up  one square
 			if (adjacentNode && !visited[adjacentNode.y][adjacentNode.x]) {
-				painter.paintOne(adjacentNode.x, adjacentNode.y, { color: COLORS_SQUARE.RED, edges: adjacentNode.edge })
+				yield { x: adjacentNode.x, y: adjacentNode.y, color: COLORS_SQUARE.RED, edge: adjacentNode.edge }
 				yield* recursive({ x: adjacentNode.x, y: adjacentNode.y })
 			}
 		}
 
 		Path.pop()
-		painter.paintOne(x, y, { color: COLORS_SQUARE.WHITE, edges: currentNode.edge })
+		yield { x, y, color: COLORS_SQUARE.WHITE, edge: currentNode.edge }
 	}
 }
