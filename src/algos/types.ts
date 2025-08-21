@@ -1,4 +1,4 @@
-import type { mazeCoords, MazeInfo, MazeNodes, MazeProps } from '../types'
+import type { MazeInfo, MazeNodes, MazeProps } from '../types'
 
 //!NOTE: types declarations:
 export interface MazeAlgoProps {
@@ -8,8 +8,8 @@ export interface MazeAlgoProps {
 }
 
 export interface TraversalProps {
+	StartPoint: MazeInfo['StartPoint']
 	EndPoint: MazeInfo['EndPoint']
 	Nodes: MazeNodes
 	MazeProps: MazeProps
-	Path: mazeCoords[]
 }

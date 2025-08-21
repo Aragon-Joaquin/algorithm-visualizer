@@ -2,7 +2,7 @@ import { RenderWithAnimationFrame } from '../maze_helpers/renderWithAnimationFra
 import type { MazeInfo } from '../types'
 import { CalculatePerformanceNow } from '../utils'
 import { mazeKruskal } from './maze'
-import { traversalDFS } from './traversal'
+import { traversalAStar, traversalDFS } from './traversal'
 import type { MazeAlgoProps, TraversalProps } from './types'
 
 // for all functions: (xAxis: number, yAxis: number, m: MazeNodes)
@@ -11,7 +11,8 @@ export const MAZE_ALGORITHMS = {
 } as const
 
 export const TRAVERSAL_ALGORITHMS = {
-	DFS: traversalDFS
+	DFS: traversalDFS,
+	AStar: traversalAStar
 } as const
 
 // Initializers
@@ -35,7 +36,7 @@ export async function InitializeMazeTraversal({
 	const { ctx, SquareSizes } = MazeProps
 
 	const genFunc = !Algorithm ? TRAVERSAL_ALGORITHMS.DFS : TRAVERSAL_ALGORITHMS[Algorithm]
-	const firstCall = genFunc({ EndPoint, Nodes, MazeProps, Path: [] })(StartPoint)
+	const firstCall = genFunc({ EndPoint, Nodes, MazeProps, StartPoint })(StartPoint)
 
 	const calcTime = CalculatePerformanceNow()
 	const animationF = new RenderWithAnimationFrame(ctx, SquareSizes)

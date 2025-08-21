@@ -1,16 +1,17 @@
+import type { GenReturn } from '.'
 import { getAdjacentNode } from '../../maze_helpers'
-import type { squarePainted } from '../../maze_helpers/renderWithAnimationFrame'
 import type { mazeCoords, Square } from '../../types'
 import { COLORS_SQUARE } from '../../utils/declarations'
 import type { TraversalProps } from '../types'
 
-export function traversalDFS({ Path, EndPoint, Nodes, MazeProps }: TraversalProps) {
+export function traversalDFS({ EndPoint, Nodes, MazeProps }: TraversalProps) {
 	const { XSquares, YSquares } = MazeProps
 
 	const visited: boolean[][] = Array.from({ length: YSquares }, () => Array(XSquares).fill(false))
+	const Path: mazeCoords[] = []
 
 	//we yield for each time we want to paint a square
-	return function* recursive(node: mazeCoords): Generator<squarePainted | void, void> {
+	return function* recursive(node: mazeCoords): GenReturn {
 		const { x, y } = node
 
 		//if visited, return

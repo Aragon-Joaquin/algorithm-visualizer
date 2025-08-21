@@ -49,7 +49,7 @@ export function UIMaze() {
 				</button>
 
 				<button onClick={clearTraversal} className="button-dark">
-					clear traversal
+					{paintStatus.pending ? 'stop' : 'clear'} traversal
 				</button>
 			</span>
 		</section>

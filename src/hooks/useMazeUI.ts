@@ -23,6 +23,10 @@ export function useMazeUI() {
 
 	const handleTraversal = async (traversalSelect: HTMLSelectElement | null) => {
 		if (!traversalSelect) return
+
+		//clear previous maze path
+		if (paintStatus.completed) UpdateMaze(mazeInfo?.Nodes, mazeProps, mazeInfo?.EndPoint, mazeInfo?.StartPoint)
+
 		setPaintStatus((prev) => ({ ...prev, completed: false, pending: true }))
 		const time = await InitializeMazeTraversal({
 			Algorithm: traversalSelect!.value as keyof typeof TRAVERSAL_ALGORITHMS,

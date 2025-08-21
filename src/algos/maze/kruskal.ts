@@ -1,4 +1,4 @@
-import { DisjointSet } from '../../DStructures/DisjointSet'
+import { DisjointSet } from '../../DStructures'
 import type { MazeNodes } from '../../types'
 import type { MazeAlgoProps } from '../types'
 interface Wall {
