@@ -33,4 +33,6 @@ export class DijkstraNode {
 		Math.abs(current.x - DijkstraNode.endpoint.x) + Math.abs(current.y - DijkstraNode.endpoint.y)
 
 	static changeEndpoint = (coords: mazeCoords) => (DijkstraNode.endpoint = coords)
+
+	recalculateFScore = () => (this.f = this.g + this.h)
 }

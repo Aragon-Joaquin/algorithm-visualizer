@@ -23,8 +23,8 @@ export function traversalAStar({ EndPoint, Nodes, StartPoint, MazeProps }: Trave
 		if (OpenList.isEmpty()) yield
 
 		//select the least F value on the OpenList
-		const getNode = OpenList.dequeue()!
-		const { x, y } = getNode
+		const currentNode = OpenList.dequeue()!
+		const { x, y } = currentNode
 		const edgesNode = Nodes[y][x].edge
 
 		if (x === EndPoint.x && y === EndPoint.y) yield
@@ -32,9 +32,9 @@ export function traversalAStar({ EndPoint, Nodes, StartPoint, MazeProps }: Trave
 		yield { x, y, edge: edgesNode, color: COLORS_SQUARE.ORANGE }
 
 		//move it to the closed list
-		ClosedList.set(mToArray(x, y), getNode)
+		ClosedList.set(mToArray(x, y), currentNode)
 
-		//check al neighbors
+		//check all neighbors
 		for (const edge in edgesNode) {
 			const assertedEdge = edge as keyof Square['edge']
 
@@ -46,19 +46,24 @@ export function traversalAStar({ EndPoint, Nodes, StartPoint, MazeProps }: Trave
 			//skips nodes already in the closed list
 			if (!neighbors || ClosedList.get(mToArray(neighbors.x, neighbors.y)) != undefined) continue
 
-			//update node if better path...
-			const newNode = new DijkstraNode(neighbors.x, neighbors.y, getNode.g + 1, getNode)
-			if (newNode.f < getNode.f) continue
+			yield { x: neighbors.x, y: neighbors.y, edge: neighbors.edge, color: COLORS_SQUARE.RED }
 
-			// add node if doesn't exists in the open list
-			if (!OpenList.queue.find((el) => el.x === neighbors.x && el.y === neighbors.y)) {
-				//evaluate g score
-				OpenList.enqueue(newNode)
-				yield { x: neighbors.x, y: neighbors.y, edge: neighbors.edge, color: COLORS_SQUARE.RED }
-				yield* recursive()
+			const existingNode = OpenList.queue.find((el) => el.x === neighbors.x && el.y === neighbors.y)
+			if (!existingNode) {
+				// add node if doesn't exists in the open list
+				OpenList.enqueue(new DijkstraNode(neighbors.x, neighbors.y, currentNode.g + 1, currentNode))
+			} else {
+				//update node if better path...
+				const predictIfBetterPath = existingNode.g + 1
+				if (predictIfBetterPath < currentNode.g) {
+					//it means is this a more optimal route
+					//so we change the parent of the existingNode
+					existingNode.parent = currentNode
+					existingNode.g = predictIfBetterPath
+					existingNode.recalculateFScore()
+				}
 			}
 		}
-
-		yield { x, y, edge: edgesNode, color: COLORS_SQUARE.WHITE }
+		yield* recursive()
 	}
 }
