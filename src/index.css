@@ -31,8 +31,8 @@ body {
 	display: block;
 
 	border-radius: 5px;
-	max-width: 1280px;
-	max-height: 720px;
+	max-width: calc(1280px - 10%);
+	max-height: calc(720px - 10%);
 
 	background-color: rgb(255, 255, 255);
 	border: 2px solid rgb(0, 0, 0);

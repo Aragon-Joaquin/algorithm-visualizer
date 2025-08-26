@@ -21,7 +21,7 @@ export class RenderWithAnimationFrame {
 		this.SquareProps = sp
 	}
 
-	async renderSquare() {
+	renderSquare() {
 		RenderWithAnimationFrame.continueExec = true
 		const { SWidth, SHeight, SThick } = this.SquareProps
 		const painter = new SquarePainter(this.ctx, SWidth, SHeight, SThick)

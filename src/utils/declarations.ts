@@ -18,6 +18,6 @@ export const COLORS_SQUARE = {
 } as const
 
 export const INTERVAL_VEL = {
-	MAX: 999,
-	MIN: 10
+	MAX: 99,
+	MIN: 1
 } as const

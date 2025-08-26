@@ -1,6 +1,6 @@
-import { RenderWithAnimationFrame } from '../maze_helpers/renderWithAnimationFrame'
-import type { MazeInfo } from '../types'
-import { CalculatePerformanceNow } from '../utils'
+import { RenderWithAnimationFrame } from '@/maze_helpers'
+import type { MazeInfo } from '@/types'
+import { CalculatePerformanceNow, type CalculatePerformanceType } from '@/utils'
 import { mazeKruskal } from './maze'
 import { traversalAStar, traversalDFS } from './traversal'
 import type { MazeAlgoProps, TraversalProps } from './types'
@@ -26,13 +26,7 @@ type InitializeTraversal = Omit<TraversalProps, 'Path'> & {
 	StartPoint: MazeInfo['StartPoint']
 }
 
-export async function InitializeMazeTraversal({
-	Algorithm,
-	EndPoint,
-	StartPoint,
-	Nodes,
-	MazeProps
-}: InitializeTraversal) {
+export function InitializeMazeTraversal({ Algorithm, EndPoint, StartPoint, Nodes, MazeProps }: InitializeTraversal) {
 	const { ctx, SquareSizes } = MazeProps
 
 	const genFunc = !Algorithm ? TRAVERSAL_ALGORITHMS.DFS : TRAVERSAL_ALGORITHMS[Algorithm]
@@ -48,10 +42,12 @@ export async function InitializeMazeTraversal({
 		else break
 	}
 
-	console.log('totalPaintIterations: ', animationF.queueToPaint.length)
+	//! calcTime() is the time the algorithm taken without any other interruption (like painting)
+	//! animationF.queueToPaint.length is the total paint iterations
+	const propsToReturn = [calcTime(), animationF.queueToPaint.length]
 
 	//then we render it until the queue is empty
 	animationF.renderSquare()
 
-	return calcTime()
+	return propsToReturn as [CalculatePerformanceType, number]
 }
