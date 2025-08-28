@@ -1,13 +1,14 @@
 import { RenderWithAnimationFrame } from '@/maze_helpers'
 import type { MazeInfo } from '@/types'
 import { CalculatePerformanceNow, type CalculatePerformanceType } from '@/utils'
-import { mazeKruskal } from './maze'
-import { traversalAStar, traversalDFS } from './traversal'
+import { mazeBTree, mazeKruskal } from './maze'
+import { traversalAStar, traversalDFS } from './maze/traversal'
 import type { MazeAlgoProps, TraversalProps } from './types'
 
 // for all functions: (xAxis: number, yAxis: number, m: MazeNodes)
 export const MAZE_ALGORITHMS = {
-	Kruskal: mazeKruskal
+	Kruskal: mazeKruskal,
+	Binary: mazeBTree
 } as const
 
 export const TRAVERSAL_ALGORITHMS = {
@@ -16,10 +17,10 @@ export const TRAVERSAL_ALGORITHMS = {
 } as const
 
 // Initializers
-export const InitializeMazeAlgorithm = (
-	algo: (typeof MAZE_ALGORITHMS)[keyof typeof MAZE_ALGORITHMS] | undefined,
-	args: MazeAlgoProps
-) => (!algo ? MAZE_ALGORITHMS.Kruskal(args) : algo(args))
+export const InitializeMazeAlgorithm = (algo: keyof typeof MAZE_ALGORITHMS | undefined, args: MazeAlgoProps) => {
+	const algoFound = MAZE_ALGORITHMS[algo as keyof typeof MAZE_ALGORITHMS]
+	return !algoFound ? MAZE_ALGORITHMS.Kruskal(args) : algoFound(args)
+}
 
 type InitializeTraversal = Omit<TraversalProps, 'Path'> & {
 	Algorithm: keyof typeof TRAVERSAL_ALGORITHMS | undefined

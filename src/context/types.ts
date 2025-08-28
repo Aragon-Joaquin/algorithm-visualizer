@@ -1,5 +1,4 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react'
-import { MAZE_ALGORITHMS } from '../algos'
 import { getSquareSizes } from '../maze_helpers'
 import type { MazeInfo, MazeProps } from '../types'
 import type { algoStatusType, paintStatusType } from './hooks'
@@ -36,6 +35,5 @@ export const defaultMazeProps: MazeProps = {
 export const defaultMazeInfo: MazeInfo = {
 	Nodes: [],
 	EndPoint: { x: 0, y: 0 },
-	StartPoint: { x: 0, y: 0 },
-	Algorithm: MAZE_ALGORITHMS.Kruskal
+	StartPoint: { x: 0, y: 0 }
 }

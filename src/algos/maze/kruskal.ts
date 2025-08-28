@@ -7,10 +7,7 @@ interface Wall {
 	random: number
 }
 
-export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
-	//copy the maze
-	const maze = structuredClone(mNodes)
-
+export function mazeKruskal({ xAxis, yAxis, mNodes: maze }: MazeAlgoProps): MazeNodes {
 	//disjointed set
 	const ds = new DisjointSet(xAxis * yAxis)
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { InitializeMazeAlgorithm } from '../../algos'
 import { createMazeSize, UpdateMaze } from '../../maze_helpers'
 import type { MazeInfo, MazeNodes, MazeProps } from '../../types'
@@ -9,21 +9,19 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo, mazeProps: MazeProps) {
 		but i doubt making it unknown[][], would need to check each time if its null only for its initialization
 	*/
 
-	const prevMaze = useRef<MazeNodes>(new createMazeSize(mazeProps.XSquares, mazeProps.YSquares).fillMazeNodes())
-	const [newMaze, setNewMaze] = useState<MazeNodes>(prevMaze.current)
+	// const prevMaze = useRef<MazeNodes>(new createMazeSize(mazeProps.XSquares, mazeProps.YSquares).fillMazeNodes())
+	const [newMaze, setNewMaze] = useState<MazeNodes>()
 
 	useEffect(() => {
-		if (!mazeInfo.Nodes.length) return
-
-		const nMaze = InitializeMazeAlgorithm(mazeInfo.Algorithm, {
+		const nMaze = InitializeMazeAlgorithm(mazeProps.Algorithm, {
 			xAxis: mazeProps.XSquares,
 			yAxis: mazeProps.YSquares,
-			mNodes: prevMaze.current
+			mNodes: new createMazeSize(mazeProps.XSquares, mazeProps.YSquares).fillMazeNodes()
 		})
 
 		UpdateMaze(nMaze, mazeProps, mazeInfo.EndPoint, mazeInfo.StartPoint)
 		setNewMaze(nMaze)
-		prevMaze.current = mazeInfo['Nodes']
+		// prevMaze.current = mazeInfo['Nodes']
 	}, [mazeProps]) //mazeInfo
 
 	return newMaze

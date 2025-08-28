@@ -10,8 +10,6 @@ export function CalculatePerformanceNow() {
 	return (): [string, 'm' | 's' | 'ms'] => {
 		const res = performance.now() - time
 
-		console.log({ res })
-
 		if (res > TIME_IN_MS.MINUTES) return [NumForm(res / TIME_IN_MS.MINUTES), 'm']
 
 		return res > TIME_IN_MS.SECONDS ? [NumForm(res / TIME_IN_MS.SECONDS), 's'] : [NumForm(res, { maxDigits: 3 }), 'ms']

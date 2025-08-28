@@ -1,4 +1,4 @@
-import type { MAZE_ALGORITHMS } from './algos/types'
+import type { MAZE_ALGORITHMS } from './algos'
 import type { getSquareSizes } from './maze_helpers'
 
 //NOTE: the difference between mazeProps & mazeInfo is explained in mazeContext.tsx
@@ -11,6 +11,7 @@ export interface MazeProps {
 	SquareSizes: ReturnType<typeof getSquareSizes>
 	ctx: CanvasRenderingContext2D
 	canvasElement: HTMLCanvasElement
+	Algorithm?: keyof typeof MAZE_ALGORITHMS
 }
 
 export interface Square {
@@ -32,5 +33,4 @@ export interface MazeInfo {
 	Nodes: MazeNodes
 	EndPoint: mazeCoords
 	StartPoint: mazeCoords
-	Algorithm?: (typeof MAZE_ALGORITHMS)[keyof typeof MAZE_ALGORITHMS]
 }

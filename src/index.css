@@ -44,5 +44,5 @@ body {
 }
 
 .label-form {
-	@apply flex flex-col justify-center items-center gap-2 text-sm font-semibold;
+	@apply flex flex-col justify-center items-center gap-2 text-sm font-semibold text-center text-nowrap;
 }
