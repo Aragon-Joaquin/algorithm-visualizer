@@ -13,8 +13,6 @@ export function MazeProvider({ children }: { children: ReactNode }) {
 	//NOTE: meanwhile mazeInfo causes an update.
 	const [mazeInfo, setMazeInfo] = useState<MazeInfo>(defaultMazeInfo)
 
-	console.log('rendering maze provider', { mazeInfo })
-
 	// hooks
 	const NMaze = useTriggerMazeUpdate(mazeInfo, mazeProps)
 	const endpoint = useCanvasUtils(mazeProps, mazeInfo)

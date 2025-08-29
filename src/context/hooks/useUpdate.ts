@@ -13,11 +13,16 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo, mazeProps: MazeProps) {
 	const [newMaze, setNewMaze] = useState<MazeNodes>()
 
 	useEffect(() => {
+		const newEmptyMaze = new createMazeSize(mazeProps.XSquares, mazeProps.YSquares)
+		newEmptyMaze.fillMazeNodes()
+
 		const nMaze = InitializeMazeAlgorithm(mazeProps.Algorithm, {
 			xAxis: mazeProps.XSquares,
 			yAxis: mazeProps.YSquares,
-			mNodes: new createMazeSize(mazeProps.XSquares, mazeProps.YSquares).fillMazeNodes()
+			mNodes: newEmptyMaze
 		})
+
+		console.log({ nMaze })
 
 		UpdateMaze(nMaze, mazeProps, mazeInfo.EndPoint, mazeInfo.StartPoint)
 		setNewMaze(nMaze)

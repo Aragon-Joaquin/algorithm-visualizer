@@ -11,6 +11,10 @@ export class createMazeSize {
 		this.MazeSize = new Array(this.YSquares).fill(null).map(() => new Array(this.XSquares).fill(null))
 	}
 
+	/**
+	 * @param i is the XAxis [0][i]
+	 * @param j is the YAxis [j][0]
+	 */
 	loopMaze(cb: (i: number, j: number) => void) {
 		for (let i = 0; i < this.XSquares; i++) {
 			for (let j = 0; j < this.YSquares; j++) {

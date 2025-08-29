@@ -7,7 +7,9 @@ interface Wall {
 	random: number
 }
 
-export function mazeKruskal({ xAxis, yAxis, mNodes: maze }: MazeAlgoProps): MazeNodes {
+export function mazeKruskal({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
+	const maze = mNodes.MazeSize
+
 	//disjointed set
 	const ds = new DisjointSet(xAxis * yAxis)
 
