@@ -22,8 +22,6 @@ export function useTriggerMazeUpdate(mazeInfo: MazeInfo, mazeProps: MazeProps) {
 			mNodes: newEmptyMaze
 		})
 
-		console.log({ nMaze })
-
 		UpdateMaze(nMaze, mazeProps, mazeInfo.EndPoint, mazeInfo.StartPoint)
 		setNewMaze(nMaze)
 		// prevMaze.current = mazeInfo['Nodes']

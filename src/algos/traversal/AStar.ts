@@ -1,9 +1,9 @@
+import { DijkstraNode, PriorityQueue } from '@/DStructures'
+import { getAdjacentNode } from '@/maze_helpers'
+import type { Square } from '@/types'
+import { COLORS_SQUARE, matrixToArray } from '@/utils'
 import type { GenReturn } from '.'
-import { DijkstraNode, PriorityQueue } from '../../../DStructures'
-import { getAdjacentNode } from '../../../maze_helpers'
-import type { Square } from '../../../types'
-import { COLORS_SQUARE, matrixToArray } from '../../../utils'
-import type { TraversalProps } from '../../types'
+import type { TraversalProps } from '../types'
 
 export function traversalAStar({ EndPoint, Nodes, StartPoint, MazeProps }: TraversalProps) {
 	const { YSquares } = MazeProps

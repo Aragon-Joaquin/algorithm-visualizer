@@ -1,10 +1,8 @@
 import { DisjointSet } from '@/DStructures'
 import { getAdjacentNode } from '@/maze_helpers'
-import type { MazeNodes } from '@/types'
+import type { MazeNodes, Square } from '@/types'
 import { matrixToArray, OPPOSING_EDGES } from '@/utils'
 import type { MazeAlgoProps } from '../types'
-
-//! My worst code ever. improve IMMEDIATELY !!
 
 // 1) initialize the first row (xAxis) with a different Set id
 // 2) randomize the merge of adjacent Sets
@@ -13,18 +11,17 @@ import type { MazeAlgoProps } from '../types'
 // 5) repeat until last row
 // 6) omit vertical connection (step 3) and join all of them
 
-const getHorizontalPos = (): ('left' | 'right')[] =>
-	(['left', 'right'] as const)
-		.map((v) => ({ v, r: Math.random() }))
-		.sort((a, b) => a.r - b.r)
-		.map(({ v }) => v)
-
-const PROBABILITY_DOWNWARD = 0.5 as const
+const PROBABILITY_DOWNWARD = 0.9 as const
+const PROBABILITY_HORIZONTAL = 0.4 as const
+const DIR_HORIZONTAL: keyof Square['edge'] = 'right' as const
+const DIR_VERTICAL: keyof Square['edge'] = 'bottom' as const
 
 export function mazeEllers({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
+	//step 1 (we initialize all with different ids instead of doing it each row)
 	const disSet = new DisjointSet(xAxis * yAxis)
-	const randomizeMergeActions = () => Math.floor(Math.random() * xAxis)
-	const mToArray = matrixToArray(yAxis)
+
+	//xAxis because we're using rows
+	const mToArray = matrixToArray(xAxis)
 
 	const { MazeSize: maze } = mNodes
 
@@ -33,92 +30,100 @@ export function mazeEllers({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
 		if (iy === yAxis - 1) return
 
 		row.forEach((square, ix) => {
+			const adjNode = getAdjacentNode(maze, iy, ix)[DIR_HORIZONTAL]()
+
+			//step 2 - merge horizontal sets
+			//TODO: fix this logic too
+			if (Math.random() < PROBABILITY_HORIZONTAL) return
+			if (!adjNode) return
+
 			const currentNode = mToArray(iy, ix)
-			const getAdjNode = getAdjacentNode(maze, iy, ix)
-			let mergeTimes = randomizeMergeActions() // + 1?
+			const nodeNeighbor = mToArray(adjNode.y, adjNode.x)
 
-			//we merge the row X times
-			while (mergeTimes--) {
-				//we check for left or right
-				getHorizontalPos().some((pos) => {
-					const adjNode = getAdjNode[pos]()
-					if (!adjNode) return
+			//it means they're in the same set
+			if (disSet.find(nodeNeighbor) === disSet.find(currentNode)) return
+			disSet.union(currentNode, nodeNeighbor)
 
-					const nodeNeighbor = mToArray(adjNode.y, adjNode.x)
-
-					//it means they're in the same set
-					if (disSet.find(nodeNeighbor) === disSet.find(currentNode)) return
-					disSet.union(currentNode, nodeNeighbor)
-
-					maze[iy][ix] = {
-						...square,
-						edge: {
-							...square.edge,
-							[pos]: false
-						}
-					}
-
-					maze[adjNode.y][adjNode.x] = {
-						...adjNode,
-						edge: {
-							...adjNode.edge,
-							[OPPOSING_EDGES[pos]]: false
-						}
-					}
-
-					return true
-				})
+			maze[iy][ix] = {
+				...square,
+				edge: {
+					...square.edge,
+					[DIR_HORIZONTAL]: false
+				}
 			}
+
+			maze[adjNode.y][adjNode.x] = {
+				...adjNode,
+				edge: {
+					...adjNode.edge,
+					[OPPOSING_EDGES[DIR_HORIZONTAL]]: false
+				}
+			}
+
+			return true
 		})
-		//step 3 here
+		//step 3 - create downwards connection for each set
+		// [0, 19] - [20, 39] - [40, 59]...
 		const range = disSet.parent.slice(row.length * iy, row.length * (iy + 1))
-		const mappedSets = new Map<number, number>()
+		const mappedSets = new Map<number, boolean>()
 
+		console.log('NEW ROW', disSet)
 		range.forEach((id, ix) => {
-			const random = Math.random() > PROBABILITY_DOWNWARD
-			if (!random && !mappedSets.get(id)) return
+			//TODO: fix this logic
+			if (Math.random() < PROBABILITY_DOWNWARD) {
+				// if its undefined and the next node its in the same group,let it pass.
+				// else return
+				if (mappedSets.get(id) || disSet.parent[ix + 1] === id) return
+			}
 
-			const getAdjNode = getAdjacentNode(maze, iy, ix)['bottom']()
+			const getAdjNode = getAdjacentNode(maze, iy, ix)[DIR_VERTICAL]()
 			if (!getAdjNode) return
 
-			disSet.union(mToArray(iy, ix), mToArray(getAdjNode.y, getAdjNode.x))
+			//we do it inverse just to get the top node priority when merging, it doesn't change anything really
+			disSet.union(mToArray(getAdjNode.y, getAdjNode.x), mToArray(iy, ix))
 
 			const currentNode = maze[iy][ix]
 			maze[iy][ix] = {
 				...currentNode,
 				edge: {
 					...currentNode.edge,
-					bottom: false
+					[DIR_VERTICAL]: false
 				}
 			}
 
-			maze[iy][ix] = {
+			maze[getAdjNode.y][getAdjNode.x] = {
 				...getAdjNode,
 				edge: {
 					...getAdjNode.edge,
-					top: false
+					[OPPOSING_EDGES[DIR_VERTICAL]]: false
 				}
 			}
+
+			mappedSets.set(id, true)
 		})
 	})
 
-	//step 6 here
-	maze.at(-1)?.forEach((_, ix) => {
-		const getAdjNode = getAdjacentNode(maze, yAxis - 1, ix)
+	//step 6 - join them all
+	maze.at(-1)?.forEach((sq, ix) => {
+		const adjNode = getAdjacentNode(maze, yAxis - 1, ix)[DIR_HORIZONTAL]()
 
-		getHorizontalPos().forEach((pos) => {
-			const adjNode = getAdjNode[pos]()
-			if (!adjNode) return
+		if (!adjNode) return
 
-			const currentNode = maze[yAxis - 1][ix]
-			maze[yAxis - 1][ix] = {
-				...currentNode,
-				edge: {
-					...currentNode.edge,
-					[pos]: false
-				}
+		maze[yAxis - 1][ix] = {
+			...sq,
+			edge: {
+				...sq.edge,
+				[DIR_HORIZONTAL]: false
 			}
-		})
+		}
+
+		maze[yAxis - 1][adjNode.x] = {
+			...adjNode,
+			edge: {
+				...adjNode.edge,
+				[OPPOSING_EDGES[DIR_HORIZONTAL]]: false
+			}
+		}
 	})
 
 	return maze

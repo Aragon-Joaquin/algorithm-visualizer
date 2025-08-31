@@ -1,8 +1,8 @@
+import { getAdjacentNode } from '@/maze_helpers'
+import type { mazeCoords, Square } from '@/types'
+import { COLORS_SQUARE } from '@/utils/declarations'
 import type { GenReturn } from '.'
-import { getAdjacentNode } from '../../../maze_helpers'
-import type { mazeCoords, Square } from '../../../types'
-import { COLORS_SQUARE } from '../../../utils/declarations'
-import type { TraversalProps } from '../../types'
+import type { TraversalProps } from '../types'
 
 export function traversalDFS({ EndPoint, Nodes, MazeProps }: TraversalProps) {
 	const { XSquares, YSquares } = MazeProps
