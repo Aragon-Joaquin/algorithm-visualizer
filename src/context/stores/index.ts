@@ -1,4 +1,6 @@
-export * from './mazeUIReducer'
+export * from './mazeInfoStore'
+export * from './mazePropsStore'
+export * from './mazeUIStore'
 
 /*
 to be honest i didn't want to bloat my web more but since it takes a

@@ -9,7 +9,10 @@ export function UIMaze() {
 
 	const {
 		mazeUI: { handleTraversal, clearTraversal, paintStatus },
-		setMazeProps
+		mProps: {
+			changeAlgorithm,
+			mazeProps: { Algorithm }
+		}
 	} = useMazeContext()
 
 	const [range, setRange] = useState<number>(50)
@@ -26,7 +29,7 @@ export function UIMaze() {
 					<select
 						onChange={(e) => {
 							const value = (e.currentTarget.value as keyof typeof MAZE_ALGORITHMS) || 'Kruskal'
-							setMazeProps((prev) => ({ ...prev, Algorithm: value }))
+							changeAlgorithm(value)
 						}}
 						className="button-dark"
 						defaultValue="DFS"
@@ -73,6 +76,10 @@ export function UIMaze() {
 
 				<button onClick={clearTraversal} className="button-dark">
 					{paintStatus.pending ? 'stop' : 'clear'} traversal
+				</button>
+
+				<button onClick={() => changeAlgorithm(Algorithm)} className="button-dark" disabled={paintStatus.pending}>
+					REDO-maze algorithm
 				</button>
 			</span>
 		</section>

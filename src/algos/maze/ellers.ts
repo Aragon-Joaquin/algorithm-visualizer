@@ -16,6 +16,9 @@ const PROBABILITY_HORIZONTAL = 0.4 as const
 const DIR_HORIZONTAL: keyof Square['edge'] = 'right' as const
 const DIR_VERTICAL: keyof Square['edge'] = 'bottom' as const
 
+//! The implementation is 100% made by me, no pseudocode nor code references of other implementations. and thats the problem.
+//! supposedly the algorithm is in linear time, which mine isn't (implement recursion and remove nested loops),
+//! but for the sake of ending this project i'll just leave it like this
 export function mazeEllers({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
 	//step 1 (we initialize all with different ids instead of doing it each row)
 	const disSet = new DisjointSet(xAxis * yAxis)
@@ -31,11 +34,11 @@ export function mazeEllers({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
 
 		row.forEach((square, ix) => {
 			const adjNode = getAdjacentNode(maze, iy, ix)[DIR_HORIZONTAL]()
+			if (!adjNode) return
 
 			//step 2 - merge horizontal sets
 			//TODO: fix this logic too
 			if (Math.random() < PROBABILITY_HORIZONTAL) return
-			if (!adjNode) return
 
 			const currentNode = mToArray(iy, ix)
 			const nodeNeighbor = mToArray(adjNode.y, adjNode.x)
@@ -67,13 +70,12 @@ export function mazeEllers({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeNodes {
 		const range = disSet.parent.slice(row.length * iy, row.length * (iy + 1))
 		const mappedSets = new Map<number, boolean>()
 
-		console.log('NEW ROW', disSet)
 		range.forEach((id, ix) => {
 			//TODO: fix this logic
 			if (Math.random() < PROBABILITY_DOWNWARD) {
 				// if its undefined and the next node its in the same group,let it pass.
 				// else return
-				if (mappedSets.get(id) || disSet.parent[ix + 1] === id) return
+				if (mappedSets.get(id) || disSet.parent[mToArray(iy, ix) + 1] === id) return
 			}
 
 			const getAdjNode = getAdjacentNode(maze, iy, ix)[DIR_VERTICAL]()

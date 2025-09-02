@@ -1,17 +1,17 @@
 import { getSquareSizes } from '@/maze_helpers'
-import type { MazeInfo, MazeProps } from '@/types'
-import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, type ReactNode } from 'react'
 import { useCanvasUtils, useMazeUI, useTriggerMazeUpdate } from './hooks'
-import { defaultMazeInfo, defaultMazeProps, MazeContext } from './types'
+import { useMazeInfoStore, useMazePropsStore } from './stores'
+import { MazeContext } from './types'
 import { getCtx } from './utils'
 
 //TODO: make reducer?
 export function MazeProvider({ children }: { children: ReactNode }) {
 	//NOTE: mazeProps only will cause a re-creation of the maze.
-	const [mazeProps, setMazeProps] = useState<MazeProps>(defaultMazeProps)
+	const { mazeProps, initializeMazeProps, ...setMazeProps } = useMazePropsStore()
 
 	//NOTE: meanwhile mazeInfo causes an update.
-	const [mazeInfo, setMazeInfo] = useState<MazeInfo>(defaultMazeInfo)
+	const { mazeInfo, changeEndPoint, changeNodes, ...setMazeInfo } = useMazeInfoStore()
 
 	// hooks
 	const NMaze = useTriggerMazeUpdate(mazeInfo, mazeProps)
@@ -24,38 +24,43 @@ export function MazeProvider({ children }: { children: ReactNode }) {
 		if (!canvas) return
 
 		const { canvasHeight, canvasWidth, ctx, canvasElement } = canvas
-		setMazeProps((prev) => ({
-			...prev,
-			...{ ctx, canvasHeight, canvasWidth, canvasElement },
+
+		initializeMazeProps({
+			ctx,
+			canvasHeight,
+			canvasWidth,
+			canvasElement,
 			SquareSizes: getSquareSizes(
 				{ width: canvasWidth, height: canvasHeight },
 				{ x: mazeProps.XSquares, y: mazeProps.YSquares }
 			)
-		}))
+		})
 	}, [])
 
 	useEffect(() => {
 		//cannot be the less than the start point
 		if (endpoint.x < 0 || endpoint.y < 0) return
 
-		setMazeInfo((prev) => ({
-			...prev,
-			EndPoint: { x: endpoint.x, y: endpoint.y }
-		}))
+		changeEndPoint({ x: endpoint.x, y: endpoint.y })
 	}, [endpoint])
 
 	useEffect(() => {
 		if (!NMaze) return
-		setMazeInfo((prev) => ({ ...prev, Nodes: NMaze }))
+		changeNodes(NMaze)
 	}, [NMaze])
 
 	return (
 		<MazeContext.Provider
 			value={{
-				mazeProps,
-				setMazeProps,
-				mazeInfo,
-				setMazeInfo,
+				mProps: { mazeProps, ...setMazeProps },
+
+				mInfo: {
+					mazeInfo,
+					changeEndPoint,
+					changeNodes,
+					...setMazeInfo
+				},
+
 				mazeUI: mazeUIProps
 			}}
 		>
