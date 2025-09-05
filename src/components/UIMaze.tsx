@@ -31,7 +31,7 @@ export function UIMaze() {
 							const value = (e.currentTarget.value as keyof typeof MAZE_ALGORITHMS) || 'Kruskal'
 							changeAlgorithm(value)
 						}}
-						className="button-dark"
+						className="button-dark w-40"
 						defaultValue="DFS"
 					>
 						{Object.entries(MAZE_ALGORITHMS).map(([key]) => (

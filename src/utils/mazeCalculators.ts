@@ -9,6 +9,6 @@ export const matrixToArray = (yAxis: number) => (row: number, col: number) => ro
  * @param yAxis total of columns in the maze
  */
 export const arrayToMatrix = (pos: number, yAxis: number) => ({
-	y: Math.floor(pos / yAxis),
-	x: pos % yAxis
+	y: pos % yAxis,
+	x: Math.floor(pos / yAxis)
 })

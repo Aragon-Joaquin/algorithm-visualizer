@@ -1,4 +1,4 @@
-import { getAdjacentNode } from '@/maze_helpers'
+import { getAdjacentNode, randomizeEdges } from '@/maze_helpers'
 import type { MazeNodes, Square } from '@/types'
 import { matrixToArray, OPPOSING_EDGES } from '@/utils'
 import type { MazeAlgoProps } from '../types'
@@ -14,12 +14,7 @@ export function mazeRecBacktrack({ xAxis, yAxis, mNodes }: MazeAlgoProps): MazeN
 	const visited = new Set<number>()
 
 	function recursive({ x, y, edge }: Square) {
-		const randomizeKeys = Object.keys(edge)
-			.map((k) => ({ k, r: Math.random() }))
-			.sort((a, b) => a.r - b.r)
-			.map(({ k }) => k)
-
-		for (const key of randomizeKeys) {
+		for (const key of randomizeEdges(edge)) {
 			const assertedEdge = key as keyof Square['edge']
 
 			if (!edge[assertedEdge]) continue

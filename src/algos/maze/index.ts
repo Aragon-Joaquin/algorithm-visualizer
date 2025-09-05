@@ -1,3 +1,5 @@
 export * from './binaryTree'
 export * from './ellers'
 export * from './kruskal'
+export * from './prims'
+export * from './recBacktrack'
