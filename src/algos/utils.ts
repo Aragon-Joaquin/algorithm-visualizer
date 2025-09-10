@@ -2,7 +2,7 @@ import { RenderWithAnimationFrame } from '@/maze_helpers'
 import type { MazeInfo } from '@/types'
 import { CalculatePerformanceNow, type CalculatePerformanceType } from '@/utils'
 import { mazeBTree, mazeEllers, mazeGrowingTree, mazeKruskal, mazePrims, mazeRecBacktrack } from './maze'
-import { traversalAStar, traversalDFS } from './traversal'
+import { traversalAStar, traversalDFS, traversalTremaux } from './traversal'
 import type { MazeAlgoProps, TraversalProps } from './types'
 
 // for all functions: (xAxis: number, yAxis: number, m: MazeNodes)
@@ -17,7 +17,8 @@ export const MAZE_ALGORITHMS = {
 
 export const TRAVERSAL_ALGORITHMS = {
 	DFS: traversalDFS,
-	AStar: traversalAStar
+	AStar: traversalAStar,
+	Tremaux: traversalTremaux
 } as const
 
 // Initializers
