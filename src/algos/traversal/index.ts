@@ -4,4 +4,4 @@ export type GenReturn = Generator<squarePainted | void, void>
 
 export * from './AStar'
 export * from './DFS'
-export * from './Tremaux'
+export * from './Pledge'
