@@ -14,6 +14,8 @@ import type { TraversalProps } from '../types'
 the -/+90 degrees its based on the circle's "left hand". it need to touch the wall anytime unless we go 0deg
 */
 
+//TODO: left,right and bottom has the same behaviour as "top".
+//TODO: i need to somehow make them turn in a corner. the default implementation (line 54) works with "top"
 export function traversalPledge({ EndPoint, Nodes }: TraversalProps) {
 	const positionMap: Record<number, keyof Square['edge']> = {
 		0: 'top',
@@ -22,14 +24,15 @@ export function traversalPledge({ EndPoint, Nodes }: TraversalProps) {
 		270: 'right'
 	} as const
 
-	const leftToMove = {
-		top: 'left',
-		left: 'bottom',
-		bottom: 'right',
-		right: 'top'
+	// -/+90 for each. we prioritize -90 first
+	const possibleMovements = {
+		top: ['right', 'left'],
+		left: ['top', 'bottom'],
+		bottom: ['left', 'right'],
+		right: ['bottom', 'top']
 	} as const
 
-	const currentDegrees: keyof typeof positionMap = 0
+	let currentDegrees: keyof typeof positionMap = 0
 
 	return function* recursive(node: mazeCoords): GenReturn {
 		const { x, y } = node
@@ -38,18 +41,28 @@ export function traversalPledge({ EndPoint, Nodes }: TraversalProps) {
 		yield { x, y, color: COLORS_SQUARE.ORANGE, edge }
 		if (EndPoint.x === x && EndPoint.y === y) yield
 
-		const pos = positionMap[Math.abs(currentDegrees)]
-		for (const key of pos === 'top' || pos === 'bottom' ? ['right', 'left'] : ['top', 'bottom']) {
+		const pos = positionMap[((currentDegrees % 360) + 360) % 360] // we position we're heading to, e.g. "right"
+
+		//reduce iterations. e.g. when iterating over right, its only possible ["bottom","top"]
+		for (const key of possibleMovements[pos]) {
 			const assertedEdge = key as keyof Square['edge']
-			if (edge[assertedEdge]) continue
+			const adjNode = getAdjacentNode(Nodes, y, x)[pos]()! // its never null if we checked the edges
 
-			const adjNode = getAdjacentNode(Nodes, y, x)[leftToMove[assertedEdge]]()
-			if (!adjNode) continue
+			console.log(node, edge, { pos, currentDegrees, assertedEdge })
 
-			if (pos === 'top' && !edge.top) {
-				yield* recursive({ x: adjNode.x, y: adjNode.y })
+			//there's a wall in front. right > top | bottom
+			if (edge[pos]) {
+				const moveTo = getAdjacentNode(Nodes, y, x)[assertedEdge]!()
+				if (!moveTo) continue
+
+				const movement = possibleMovements[pos].at(0) === assertedEdge ? -90 : 90 // we make the calculation
+				currentDegrees += movement
+
+				yield* recursive({ x: node.x, y: node.y })
 				break
 			}
+			//else, we keep going throw the same pos. right > right
+			yield* recursive({ x: adjNode.x, y: adjNode.y })
 		}
 	}
 }
