@@ -22,6 +22,8 @@ i know it has the worst design ever made but my intention was to learn algorithm
 - Pledge
 - Random MOuse (it has the worst performance (it was intended to be like this))
 
+![preview_image](.github/preview.png)
+
 ---
 
 ### in some future:
