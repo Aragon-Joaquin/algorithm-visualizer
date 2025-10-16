@@ -44,10 +44,15 @@ export function InitializeMazeTraversal({ Algorithm, EndPoint, StartPoint, Nodes
 	const animationF = new RenderWithAnimationFrame(ctx, SquareSizes)
 
 	//yield squarePainted/void on the value if the endpoint is found
-	while (true) {
-		const res = firstCall.next()
-		if (res.value != undefined) animationF.pushToPaint(res.value)
-		else break
+	try {
+		while (true) {
+			const res = firstCall.next()
+			if (res.value != undefined) animationF.pushToPaint(res.value)
+			else break
+		}
+	} catch {
+		//TODO: improve this... or not?
+		alert('Infinite recursion catched!')
 	}
 
 	//! calcTime() is the time the algorithm taken without any other interruption (like painting)

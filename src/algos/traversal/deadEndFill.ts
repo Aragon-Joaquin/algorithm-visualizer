@@ -1,6 +1,6 @@
 import { getAdjacentNode } from '@/maze_helpers'
 import type { mazeCoords, Square } from '@/types'
-import { matrixToArray } from '@/utils'
+import { COLORS_SQUARE, matrixToArray } from '@/utils'
 import type { GenReturn } from '.'
 import type { TraversalProps } from '../types'
 
@@ -12,41 +12,54 @@ import type { TraversalProps } from '../types'
 	3) repeat until there's no node change
 	4) it should be one path thats not fill that carries out to the end of the maze
 */
-export function traversalDeadEndFill({ Nodes, MazeProps: { YSquares, XSquares } }: TraversalProps) {
+export function traversalDeadEndFill({
+	StartPoint,
+	EndPoint,
+	Nodes,
+	MazeProps: { YSquares, XSquares }
+}: TraversalProps) {
 	const mToArray = matrixToArray(YSquares)
 	const FilledNodes = new Map<number, Square>()
 	let hasChanged = true
 
+	//let max = 2
 	return function* recursive(node: mazeCoords): GenReturn {
-		const { x, y } = node
-		const { edge } = Nodes[y][x]
+		const { y } = node
 
-		if (x === 0 && y === 0) {
-			console.log('iterate')
+		// check if its 0
+		if (!y) {
+			//! testing, the first iteration just fills every square for some reason
+			// max--
+			// if (max == 0) yield
 			if (!hasChanged) yield
 			else hasChanged = false
 		}
 
-		yield { x, y, color: 'black', edge }
+		//we need to do this, else we hit the maximum callstack error due too much recursion
+		for (let xIndex = 0; xIndex < XSquares; xIndex++) {
+			const { x, edge } = Nodes[y][xIndex]
 
-		let adjacentNodes: number = 0
-		for (const key in edge) {
-			const assertedKey = key as keyof Square['edge']
-			if (edge[assertedKey]) continue // if it has a wall, we continue
+			yield { x, y, color: COLORS_SQUARE.BLACK, edge }
 
-			const adjNode = getAdjacentNode(Nodes, x, y)[assertedKey]()
-			if (!adjNode || !FilledNodes.has(mToArray(adjNode.x, adjNode.y))) continue
+			let adjacentNodes: number = 0
+			for (const key in edge) {
+				const assertedKey = key as keyof Square['edge']
+				if (edge[assertedKey]) continue // if it has a wall, we continue
 
-			adjacentNodes++
+				const adjNode = getAdjacentNode(Nodes, y, x)[assertedKey]()
+				// console.log(adjNode && { adjCoords: mToArray(adjNode.y, adjNode.x), assertedKey, x, y  })
+				if (!adjNode || FilledNodes.has(mToArray(adjNode.y, adjNode.x))) continue
+
+				adjacentNodes++
+			}
+
+			if (adjacentNodes <= 1) {
+				if ((StartPoint.x === x && StartPoint.y === y) || (EndPoint.x === x && EndPoint.y === y)) continue
+				hasChanged = true
+				FilledNodes.set(mToArray(y, x), { y, x, edge })
+			}
 		}
 
-		if (adjacentNodes <= 1) {
-			hasChanged = true
-			FilledNodes.set(mToArray(x, y), Nodes[y][x])
-		}
-
-		const { newX, newY } = x >= XSquares - 1 ? { newX: 0, newY: y + 1 } : { newX: x + 1, newY: y }
-
-		yield* recursive({ x: newX, y: newY >= YSquares - 1 ? 0 : newY })
+		yield* recursive({ x: 0, y: y + 1 >= YSquares ? 0 : y + 1 })
 	}
 }
