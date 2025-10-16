@@ -43,7 +43,6 @@ export function traversalDeadEndFill({
 				if (edge[assertedKey]) continue // if it has a wall, we continue
 
 				const adjNode = getAdjacentNode(Nodes, y, x)[assertedKey]()
-				// console.log(adjNode && { adjCoords: mToArray(adjNode.y, adjNode.x), assertedKey, x, y  })
 				if (!adjNode || FilledNodes.has(mToArray(adjNode.y, adjNode.x))) continue
 
 				adjacentNodes++

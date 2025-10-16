@@ -2,8 +2,7 @@ import { RenderWithAnimationFrame } from '@/maze_helpers'
 import type { MazeInfo } from '@/types'
 import { CalculatePerformanceNow, type CalculatePerformanceType } from '@/utils'
 import { mazeBTree, mazeEllers, mazeGrowingTree, mazeKruskal, mazePrims, mazeRecBacktrack } from './maze'
-import { traversalAStar, traversalDFS, traversalPledge } from './traversal'
-import { traversalDeadEndFill } from './traversal/deadEndFill'
+import { traversalAStar, traversalDeadEndFill, traversalDFS, traversalPledge, traversalRandomMouse } from './traversal'
 import type { MazeAlgoProps, TraversalProps } from './types'
 
 // for all functions: (xAxis: number, yAxis: number, m: MazeNodes)
@@ -20,9 +19,9 @@ export const TRAVERSAL_ALGORITHMS = {
 	DFS: traversalDFS,
 	AStar: traversalAStar,
 	Pledge: traversalPledge,
-	'DeadEnd Filling': traversalDeadEndFill
+	'DeadEnd Filling': traversalDeadEndFill,
+	'Random Mouse': traversalRandomMouse
 } as const
-
 // Initializers
 export const InitializeMazeAlgorithm = (algo: keyof typeof MAZE_ALGORITHMS | undefined, args: MazeAlgoProps) => {
 	const algoFound = MAZE_ALGORITHMS[algo as keyof typeof MAZE_ALGORITHMS]
@@ -52,7 +51,6 @@ export function InitializeMazeTraversal({ Algorithm, EndPoint, StartPoint, Nodes
 		}
 	} catch {
 		//TODO: improve this... or not?
-		alert('Infinite recursion catched!')
 	}
 
 	//! calcTime() is the time the algorithm taken without any other interruption (like painting)
