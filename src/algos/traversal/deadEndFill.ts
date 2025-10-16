@@ -18,19 +18,14 @@ export function traversalDeadEndFill({
 	Nodes,
 	MazeProps: { YSquares, XSquares }
 }: TraversalProps) {
-	const mToArray = matrixToArray(YSquares)
-	const FilledNodes = new Map<number, Square>()
+	const mToArray = matrixToArray(XSquares)
+	const FilledNodes = new Set<number>()
 	let hasChanged = true
 
-	//let max = 2
 	return function* recursive(node: mazeCoords): GenReturn {
 		const { y } = node
 
-		// check if its 0
 		if (!y) {
-			//! testing, the first iteration just fills every square for some reason
-			// max--
-			// if (max == 0) yield
 			if (!hasChanged) yield
 			else hasChanged = false
 		}
@@ -39,7 +34,8 @@ export function traversalDeadEndFill({
 		for (let xIndex = 0; xIndex < XSquares; xIndex++) {
 			const { x, edge } = Nodes[y][xIndex]
 
-			yield { x, y, color: COLORS_SQUARE.BLACK, edge }
+			const perfCalc = mToArray(y, x)
+			if (FilledNodes.has(perfCalc)) continue
 
 			let adjacentNodes: number = 0
 			for (const key in edge) {
@@ -56,10 +52,12 @@ export function traversalDeadEndFill({
 			if (adjacentNodes <= 1) {
 				if ((StartPoint.x === x && StartPoint.y === y) || (EndPoint.x === x && EndPoint.y === y)) continue
 				hasChanged = true
-				FilledNodes.set(mToArray(y, x), { y, x, edge })
+				FilledNodes.add(perfCalc)
+				yield { x, y, color: COLORS_SQUARE.BLACK, edge }
 			}
 		}
 
 		yield* recursive({ x: 0, y: y + 1 >= YSquares ? 0 : y + 1 })
+		return
 	}
 }
